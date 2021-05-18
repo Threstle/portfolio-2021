@@ -1,4 +1,4 @@
-@import (reference) "../references.less";
+@import (reference) "../../references.less";
 
 // ----------------------------------------------------------------------------- CONFIG
 
@@ -10,12 +10,36 @@
   h1{
     color:blue;
     .font-roboto-regular();
+    font-size: 100px;
+  }
+
+  h2{
+    font-size: 80px;
   }
 
   // ----------------------------------------------------------------------------- BLOCK
 
   // ----------------------------------------------------------------------------- ELEMENTS
+  &_webglCanvas{
+    position: absolute;
+    top:0;
+    left:0;
+    width: 100%;
+    height: 100%;
+  }
 
+  &_container
+  {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 
 }
 

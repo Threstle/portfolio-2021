@@ -88,10 +88,11 @@ module.exports = {
 
             // Shaders
             {
-                test: /\.(glsl|vs|fs|vert|frag)$/,
+                test: /\.(glsl|vs|fs|vert|frag|txt)$/,
                 exclude: /node_modules/,
                 use: [
-                    'raw-loader'
+                    'raw-loader',
+                    'glslify-loader'
                 ]
             },
             // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
