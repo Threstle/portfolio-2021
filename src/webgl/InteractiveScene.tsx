@@ -48,23 +48,24 @@ export default class InteractiveScene {
  
         this.renderer = new WebGLRenderer({
             canvas: pCanvas
-        })
+        });
 
-        this.renderer.setSize(this.sizes.x, this.sizes.y)
-        this.renderer.setPixelRatio(pPixelRatio)
+        this.renderer.setSize(this.sizes.x, this.sizes.y);
+        this.renderer.setPixelRatio(pPixelRatio);
         this.renderer.setClearColor(new THREE.Color( 0xFFFFFF ));
 
-        this.camera = new THREE.PerspectiveCamera(75, this.sizes.x / this.sizes.y, 0.1, 100)
+        this.camera = new THREE.PerspectiveCamera(75, this.sizes.x / this.sizes.y, 0.1, 100);
         this.camera.position.set(0, 0, 3);
         this.scene.add(this.camera);
         
         // Controls
-        this.controls = new OrbitControls(this.camera, pCanvas);
-        this.controls.enableDamping = true
+        //this.controls = new OrbitControls(this.camera, pCanvas);
+        //this.controls.enableDamping = true
 
         
         // Listeners
         window.addEventListener("mousemove",this.onMouseMove.bind(this));
+        window.addEventListener("touchmove",this.onMouseMove.bind(this));
 
         this.interactiveTexture = new InteractiveTexture(new Vector2(
             this.sizes.x/10,
@@ -120,7 +121,11 @@ export default class InteractiveScene {
                 const domTexture = new THREE.Texture(domCanvas);
                 domTexture.needsUpdate = true;
                 //document.body.append(domCanvas);
-                setTimeout(()=>pDomElement.style.display = "none",1000);
+                setTimeout(()=>{
+                    pDomElement.style.display = "none";
+                    domTexture.needsUpdate = true;
+                
+                },1000);
                 //document.querySelector(".Content").remove();
                 
                 const domGeometry = new THREE.PlaneGeometry(this.sizes.width*0.004, this.sizes.height*0.004, 256, 256);
@@ -155,7 +160,7 @@ export default class InteractiveScene {
         this.interactiveTexture.update(this.mouse);
     
         // Update controls
-        this.controls.update()
+        //this.controls.update()
     
         // Render
         this.renderer.render(this.scene, this.camera)
@@ -179,6 +184,13 @@ export default class InteractiveScene {
 
     onMouseMove(e:any){
 
+        console.log(e);
+
+        if(!e?.clientX){
+            e.clientX = e?.touches[0].clientX;
+            e.clientY = e?.touches[0].clientY;
+        }
+
         this.mouse.set(
             e.clientX/this.sizes.x,
             e.clientY/this.sizes.y
@@ -197,44 +209,3 @@ export default class InteractiveScene {
         this.renderer.setSize(this.sizes.width, this.sizes.height)
     }
 }
-
-/**
- * Base
- */
-// Debug
-const gui = new dat.GUI()
-
-// Canvas
-const canvas = document.querySelector('canvas.webgl')
-
-
-/*
-setTimeout(()=>{
-    html2canvas(document.querySelector(".Content")).then(domCanvas => {
-        const domTexture = new THREE.Texture(domCanvas);
-        domTexture.needsUpdate = true;
-        //document.body.append(domCanvas);
-        document.querySelector(".Content").remove();
-        
-        const domGeometry = new THREE.PlaneGeometry(sizes.width*0.004, sizes.height*0.004, 256, 256);
-        // Material
-        const domMaterial = new THREE.ShaderMaterial({
-            transparent:true,
-            vertexShader: textVertexShader,
-            fragmentShader: textFragmentShader,
-            uniforms:
-            {
-                uTime: { value: 0 },
-                uMouse: {value:new THREE.Vector2(0,0)},
-                uDisplacementTexture:{value:interactiveTexture.texture},
-                uDomTexture:{value:domTexture}
-                
-            }
-        })
-
-        const domMesh = new THREE.Points(domGeometry,domMaterial);
-        scene.add(domMesh);
-    });
-},1000);*/
-
-
