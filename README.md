@@ -1,8 +1,8 @@
-# Webpack-base
+# Portfolio Etienne Chaumont 2021
 
 ## About
 
-Barebone base for React projects using weback.
+Webgl portfolio
 
 ## Installation
 
@@ -26,5 +26,3 @@ Build and watch
 ```shell script
 $ npm run dev
 ```
-
-
