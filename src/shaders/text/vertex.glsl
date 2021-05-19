@@ -1,7 +1,6 @@
 uniform sampler2D uDisplacementTexture;
 uniform sampler2D uDomTexture;
 uniform float uDisplacementAmount;
-uniform float uPointSizeDisplacementAmount;
 
 varying vec2 vUv;
 
@@ -17,14 +16,12 @@ void main()
     modelPosition.z += displacementTextCoord.r*uDisplacementAmount;
     modelPosition.x += displacementTextCoord.r*uDisplacementAmount*0.4;
     modelPosition.y -= displacementTextCoord.r*uDisplacementAmount*0.2;
-    float pointSize = mix(2.0+displacementTextCoord.r*uPointSizeDisplacementAmount,0.0,textCoord.r);
 
     vec4 viewPosition = viewMatrix * modelPosition;
 
     vec4 projectedPosition = projectionMatrix * viewPosition;
 
     gl_Position = projectedPosition;
-    gl_PointSize = pointSize;
 
     vUv = uv;
 }

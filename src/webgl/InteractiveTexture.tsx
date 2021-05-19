@@ -1,11 +1,11 @@
 import * as THREE from 'three';
 import * as dat from 'dat.gui'
 import { Texture, Vector2 } from 'three';
-import Gui from '../helpers/Gui';
+import Gui, { GuiDisplacementTexture } from '../helpers/Gui';
 
 export default class InteractiveTexture {
 
-	protected canvas: HTMLCanvasElement;
+	public canvas: HTMLCanvasElement;
 
 	protected ctx: CanvasRenderingContext2D;
 
@@ -14,6 +14,8 @@ export default class InteractiveTexture {
 	protected particleTab: Particle[];
 
 	protected oldMouse: Vector2;
+
+	protected debugPanel: boolean;
 
 	protected params: {
 		maxAge: number;
@@ -25,7 +27,7 @@ export default class InteractiveTexture {
 
 	public texture: Texture;
 
-	constructor(pSize: Vector2) {
+	constructor(pSize: Vector2,pDebugPanel:boolean = false) {
 
 		this.size = pSize;
 
@@ -44,12 +46,11 @@ export default class InteractiveTexture {
 			intensity: 0.164
 		}
 
-		const guiFolder = Gui.addFolder('Displacement texture');
-		guiFolder.add(this.params, "maxAge", 5, 500, 1);
-		guiFolder.add(this.params, "size", 10, 2000, 1);
-		guiFolder.add(this.params, "maxParticles", 50, 1500, 1);
-		guiFolder.add(this.params, "velocityInfluence", 0, 2, 0.01);
-		guiFolder.add(this.params, "intensity", 0.01, 1, 0.001);
+		GuiDisplacementTexture.add(this.params, "maxAge", 5, 500, 1);
+		GuiDisplacementTexture.add(this.params, "size", 10, 2000, 1);
+		GuiDisplacementTexture.add(this.params, "maxParticles", 50, 1500, 1);
+		GuiDisplacementTexture.add(this.params, "velocityInfluence", 0, 2, 0.01);
+		GuiDisplacementTexture.add(this.params, "intensity", 0.01, 1, 0.001);
 
 	}
 
@@ -69,11 +70,10 @@ export default class InteractiveTexture {
 		this.canvas.style.width = `${this.canvas.width}px`;
 		this.canvas.style.height = `${this.canvas.height}px`;
 
-		this.canvas.style.position = "absolute";
-		this.canvas.style.zIndex = "11";
-		this.canvas.style.bottom = "50px";
+		this.canvas.style.float = "right";
+		this.canvas.style.marginTop = "20px";
 
-		document.body.append(this.canvas);
+
 	}
 
 	update(pMouse: Vector2) {
@@ -94,7 +94,7 @@ export default class InteractiveTexture {
 
 		})
 		let delta = this.oldMouse?.distanceTo(pMouse) || 0;
-		if(this?.oldMouse?.x == 0 && this?.oldMouse?.y == 0) delta = 0;
+		if (this?.oldMouse?.x == 0 && this?.oldMouse?.y == 0 || pMouse.x == 0 && pMouse.y == 0) delta = 0;
 		if (this.particleTab.length < this.params.maxParticles && delta > 0) {
 			this.particleTab.push(new Particle(
 				new Vector2(
@@ -108,7 +108,7 @@ export default class InteractiveTexture {
 		};
 
 		this.texture.needsUpdate = true;
-		if(!this.oldMouse)this.oldMouse = new Vector2(0,0);
+		if (!this.oldMouse) this.oldMouse = new Vector2(0, 0);
 		this.oldMouse.set(pMouse.x, pMouse.y);
 	}
 
