@@ -48,8 +48,11 @@ function App (props: IProps) {
     return <div className={componentName} ref={rootRef}>
         <canvas ref={webglCanvasRef} className={`${componentName}_webglCanvas`}/>
         <div ref={containerRef} className={`${componentName}_container`}>
-            <h1>Etienne Chaumont</h1>
-            <h2>creative dev</h2>
+            <div className={`${componentName}_textWrapper`}>
+                <h1>Etienne Chaumont</h1>
+                <h2>creative dev</h2>
+                <p>Based on Lyon. Currently looking for freelance jobs.</p>
+            </div>
         </div>
     </div>;
 };

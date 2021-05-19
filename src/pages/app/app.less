@@ -4,40 +4,43 @@
 
 //Component name
 @COMPONENT: App;
-.App
-{
 
-  h1{
+.App {
+
+  h1 {
     .font-roboto-regular();
     font-size: 10vw;
   }
 
-  h2{
+  h2 {
     font-size: 8vw;
   }
 
   // ----------------------------------------------------------------------------- BLOCK
 
   // ----------------------------------------------------------------------------- ELEMENTS
-  &_webglCanvas{
+  &_webglCanvas {
     position: absolute;
-    top:0;
-    left:0;
-    width: 100%;
-    height: 100%;
+    top     : 0;
+    left    : 0;
+    width   : 100%;
+    height  : 100%;
   }
 
-  &_container
-  {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+  &_container {
+    position       : absolute;
+    top            : 0;
+    left           : 0;
+    width          : 100%;
+    height         : 100%;
+    display        : flex;
+    flex-direction : column;
     justify-content: center;
-    align-items: center;
+    align-items    : center;
+  }
+
+  &_textWrapper {
+    text-align: center;
   }
 
 }
@@ -50,4 +53,3 @@
 // ----------------------------------------------------------------------------- CHILDREN
 
 // ----------------------------------------------------------------------------- PATCHES
-

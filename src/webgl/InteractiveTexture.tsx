@@ -5,27 +5,27 @@ import Gui from '../helpers/Gui';
 
 export default class InteractiveTexture {
 
-    protected canvas:HTMLCanvasElement;
+	protected canvas: HTMLCanvasElement;
 
-    protected ctx:CanvasRenderingContext2D;
+	protected ctx: CanvasRenderingContext2D;
 
-    protected size:Vector2;
+	protected size: Vector2;
 
-    protected particleTab:Particle[];
+	protected particleTab: Particle[];
 
-    protected oldMouse:Vector2;
+	protected oldMouse: Vector2;
 
-    protected params:{
-        maxAge:number;
-        size:number;
-        maxParticles:number;
-		velocityInfluence:number;
-		intensity:number;
-    };
+	protected params: {
+		maxAge: number;
+		size: number;
+		maxParticles: number;
+		velocityInfluence: number;
+		intensity: number;
+	};
 
-    public texture:Texture;
+	public texture: Texture;
 
-	constructor(pSize:Vector2) {
+	constructor(pSize: Vector2) {
 
 		this.size = pSize;
 
@@ -33,32 +33,32 @@ export default class InteractiveTexture {
 
 		this.particleTab = [];
 
-		this.oldMouse = new Vector2(0,0);
+		this.oldMouse = null;
 
 		// Debug
 		this.params = {
-			maxAge:250,
-			size:500,
-			maxParticles:600,
-			velocityInfluence:0.6,
-			intensity:0.164
+			maxAge: 109,
+			size: 500,
+			maxParticles: 600,
+			velocityInfluence: 0.6,
+			intensity: 0.164
 		}
 
 		const guiFolder = Gui.addFolder('Displacement texture');
-		guiFolder.add(this.params,"maxAge",5,500,1);
-		guiFolder.add(this.params,"size",10,2000,1);
-		guiFolder.add(this.params,"maxParticles",50,1500,1);
-		guiFolder.add(this.params,"velocityInfluence",0,2,0.01);
-		guiFolder.add(this.params,"intensity",0.01,1,0.001);
+		guiFolder.add(this.params, "maxAge", 5, 500, 1);
+		guiFolder.add(this.params, "size", 10, 2000, 1);
+		guiFolder.add(this.params, "maxParticles", 50, 1500, 1);
+		guiFolder.add(this.params, "velocityInfluence", 0, 2, 0.01);
+		guiFolder.add(this.params, "intensity", 0.01, 1, 0.001);
 
 	}
 
 	initTexture() {
 		this.canvas = document.createElement('canvas');
-		
-        this.canvas.width = this.size.width;
-        this.canvas.height = this.size.height;
-        
+
+		this.canvas.width = this.size.width;
+		this.canvas.height = this.size.height;
+
 		this.ctx = this.canvas.getContext('2d');
 		this.ctx.fillStyle = 'black';
 		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -68,48 +68,48 @@ export default class InteractiveTexture {
 		this.canvas.id = 'touchTexture';
 		this.canvas.style.width = `${this.canvas.width}px`;
 		this.canvas.style.height = `${this.canvas.height}px`;
-        
-        this.canvas.style.position="absolute";
-        this.canvas.style.zIndex="11";
-		this.canvas.style.bottom="50px";
 
-        document.body.append(this.canvas);
-    }
+		this.canvas.style.position = "absolute";
+		this.canvas.style.zIndex = "11";
+		this.canvas.style.bottom = "50px";
 
-	update(pMouse:Vector2) {
-		
-		if(!pMouse)return;
+		document.body.append(this.canvas);
+	}
+
+	update(pMouse: Vector2) {
+
+		if (!pMouse) return;
 
 		this.ctx.fillStyle = 'rgba(0, 0, 0, .05)';
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-		this.particleTab.forEach((particle,index)=>{
-			if(particle.isTooOld()){
-				this.particleTab.splice(index,1);
-				
+		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+		this.particleTab.forEach((particle, index) => {
+			if (particle.isTooOld()) {
+				this.particleTab.splice(index, 1);
+
 			}
-			else
-			{
-					particle.draw(this.ctx);
+			else {
+				particle.draw(this.ctx);
 			}
-			
-			
+
+
 		})
-		let delta = this.oldMouse.distanceTo(pMouse);
-        
-		if(this.particleTab.length < this.params.maxParticles && delta > 0){
+		let delta = this.oldMouse?.distanceTo(pMouse) || 0;
+		if(this?.oldMouse?.x == 0 && this?.oldMouse?.y == 0) delta = 0;
+		if (this.particleTab.length < this.params.maxParticles && delta > 0) {
 			this.particleTab.push(new Particle(
 				new Vector2(
-					pMouse.x * this.size.width+Math.random()*10,
-					pMouse.y * this.size.height+Math.random()*10
+					pMouse.x * this.size.width + Math.random() * 10,
+					pMouse.y * this.size.height + Math.random() * 10
 				),
-			this.params.size*Math.min(delta*this.params.velocityInfluence,0.1),
-			this.params.maxAge,
-			this.params.intensity
-		))};
+				this.params.size * Math.min(delta * this.params.velocityInfluence, 0.1),
+				this.params.maxAge,
+				this.params.intensity
+			))
+		};
 
 		this.texture.needsUpdate = true;
-
-        this.oldMouse.set(pMouse.x,pMouse.y);
+		if(!this.oldMouse)this.oldMouse = new Vector2(0,0);
+		this.oldMouse.set(pMouse.x, pMouse.y);
 	}
 
 	clear() {
@@ -120,37 +120,37 @@ export default class InteractiveTexture {
 }
 
 class Particle {
-	
-    private size:number;
-    private age:number;
-    private maxAge:number;
-    private position:Vector2;
-	private intensity:number;
 
-	constructor (pPosition:Vector2,pSize:number = 10,pMaxAge:number = 250,pIntensity:number=0.01){
-		
-        this.size = pSize;
+	private size: number;
+	private age: number;
+	private maxAge: number;
+	private position: Vector2;
+	private intensity: number;
+
+	constructor(pPosition: Vector2, pSize: number = 10, pMaxAge: number = 250, pIntensity: number = 0.01) {
+
+		this.size = pSize;
 		this.age = Date.now();
 		this.maxAge = pMaxAge * 2;
 		this.position = pPosition;
 		this.intensity = pIntensity;
 	}
 
-	draw (pCtx:CanvasRenderingContext2D){
+	draw(pCtx: CanvasRenderingContext2D) {
 
 		let ageValue = Date.now() - this.age;
-		const ageAmp = Math.abs(Math.sin(ageValue/this.maxAge));
+		const ageAmp = Math.abs(Math.sin(ageValue / this.maxAge));
 
 		pCtx.beginPath();
-		pCtx.fillStyle = `rgba(255,0,0,${ageAmp*this.intensity})`;
+		pCtx.fillStyle = `rgba(255,0,0,${ageAmp * this.intensity})`;
 		pCtx.moveTo(this.position.x, this.position.y);
-		pCtx.arc(this.position.x, this.position.y, this.size*ageAmp , 0, Math.PI*2, true);
+		pCtx.arc(this.position.x, this.position.y, this.size * ageAmp, 0, Math.PI * 2, true);
 		pCtx.fill();
 	}
 
 
 
-	isTooOld(){
+	isTooOld() {
 		return Date.now() - this.age > this.maxAge * 3
 	}
 

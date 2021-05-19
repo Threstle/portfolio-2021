@@ -11,13 +11,13 @@ void main()
      vec4 displacementTextCoord = texture2D(uDisplacementTexture,vUv);
 
      // Pas sur que la transparence soit un gain de performance
-     //     float alpha = step(0.1,textCoord.r);
+          float alpha = step(0.99,textCoord.r);
 
      // On modifie la couleur en fonction du displacement
      textCoord.x +=displacementTextCoord.r*uDisplacedColor.r;
      textCoord.y +=displacementTextCoord.r*uDisplacedColor.g;
      textCoord.z +=displacementTextCoord.r*uDisplacedColor.b;
 
-     gl_FragColor = vec4(textCoord.xyz,1.0);
+     gl_FragColor = vec4(textCoord.xyz,1.0-alpha);
 
 }

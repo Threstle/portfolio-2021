@@ -1,5 +1,7 @@
 uniform sampler2D uDisplacementTexture;
 uniform sampler2D uDomTexture;
+uniform float uDisplacementAmount;
+uniform float uPointSizeDisplacementAmount;
 
 varying vec2 vUv;
 
@@ -12,8 +14,10 @@ void main()
     vec4 textCoord = texture2D(uDomTexture,uv);
 
     // On displace les vertex en fonction de la texture de displacement et on cache les points sur les zones blanches
-    modelPosition.z += displacementTextCoord.r*0.5;
-    float pointSize = mix(2.0+displacementTextCoord.r*10.0,0.0,textCoord.r);
+    modelPosition.z += displacementTextCoord.r*uDisplacementAmount;
+    modelPosition.x += displacementTextCoord.r*uDisplacementAmount*0.4;
+    modelPosition.y -= displacementTextCoord.r*uDisplacementAmount*0.2;
+    float pointSize = mix(2.0+displacementTextCoord.r*uPointSizeDisplacementAmount,0.0,textCoord.r);
 
     vec4 viewPosition = viewMatrix * modelPosition;
 
