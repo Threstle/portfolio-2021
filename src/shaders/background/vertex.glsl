@@ -1,13 +1,5 @@
-uniform float uTime;
-uniform vec2 uMouse;
-uniform vec3 uSpherePosition;
-
-uniform float uVerticalDisplacementIntensity;
-uniform float uHorizontalDisplacementIntensity;
 uniform sampler2D uDisplacementTexture;
-
-attribute float aIntensity;
-attribute float aAngle;
+uniform float uDisplacementAmount;
 
 varying float vHeight;
 varying vec2 vUv;
@@ -91,13 +83,13 @@ void main()
     vec4 textCoord = texture2D(uDisplacementTexture,uv);
 
 
-    modelPosition.z += textCoord.r*0.2;
+    modelPosition.z += textCoord.r*uDisplacementAmount;
 
     vec4 viewPosition = viewMatrix * modelPosition;
     vec4 projectedPosition = projectionMatrix * viewPosition;
 
     gl_Position = projectedPosition;
-    gl_PointSize =1.0;
+    gl_PointSize =4.0*textCoord.r;
 
     vHeight = modelPosition.z;
 

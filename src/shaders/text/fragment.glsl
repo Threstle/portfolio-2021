@@ -1,7 +1,7 @@
 uniform sampler2D uDisplacementTexture;
 uniform sampler2D uDomTexture;
+uniform vec3 uDisplacedColor;
 
-varying float vHeight;
 varying vec2 vUv;
 
 
@@ -10,12 +10,14 @@ void main()
      vec4 textCoord = texture2D(uDomTexture,vUv);
      vec4 displacementTextCoord = texture2D(uDisplacementTexture,vUv);
 
-     textCoord.x +=displacementTextCoord.r*0.5;
-     textCoord.y +=displacementTextCoord.r*0.9;
-     textCoord.z +=displacementTextCoord.r*0.1;
+     // Pas sur que la transparence soit un gain de performance
+     //     float alpha = step(0.1,textCoord.r);
 
-     //vec4 finalColor = mix(vec4(1.0),textCoord,displacementTextCoord.r);
+     // On modifie la couleur en fonction du displacement
+     textCoord.x +=displacementTextCoord.r*uDisplacedColor.r;
+     textCoord.y +=displacementTextCoord.r*uDisplacedColor.g;
+     textCoord.z +=displacementTextCoord.r*uDisplacedColor.b;
 
-     gl_FragColor = textCoord;
+     gl_FragColor = vec4(textCoord.xyz,1.0);
 
 }

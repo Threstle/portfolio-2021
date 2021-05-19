@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import * as dat from 'dat.gui'
 import { Texture, Vector2 } from 'three';
+import Gui from '../helpers/Gui';
 
 export default class InteractiveTexture {
 
@@ -17,7 +18,9 @@ export default class InteractiveTexture {
     protected params:{
         maxAge:number;
         size:number;
-        maxParticles:number
+        maxParticles:number;
+		velocityInfluence:number;
+		intensity:number;
     };
 
     public texture:Texture;
@@ -32,13 +35,21 @@ export default class InteractiveTexture {
 
 		this.oldMouse = new Vector2(0,0);
 
-        //TODO: passer debug en singleton
 		// Debug
 		this.params = {
 			maxAge:250,
 			size:500,
-			maxParticles:600
+			maxParticles:600,
+			velocityInfluence:0.6,
+			intensity:0.164
 		}
+
+		const guiFolder = Gui.addFolder('Displacement texture');
+		guiFolder.add(this.params,"maxAge",5,500,1);
+		guiFolder.add(this.params,"size",10,2000,1);
+		guiFolder.add(this.params,"maxParticles",50,1500,1);
+		guiFolder.add(this.params,"velocityInfluence",0,2,0.01);
+		guiFolder.add(this.params,"intensity",0.01,1,0.001);
 
 	}
 
@@ -86,12 +97,14 @@ export default class InteractiveTexture {
 		let delta = this.oldMouse.distanceTo(pMouse);
         
 		if(this.particleTab.length < this.params.maxParticles && delta > 0){
-			this.particleTab.push(new Particle(new Vector2(
-			pMouse.x * this.size.width+Math.random()*10,
-			pMouse.y * this.size.height+Math.random()*10
-		),
-		Math.min(this.params.size*delta,10),
-		this.params.maxAge
+			this.particleTab.push(new Particle(
+				new Vector2(
+					pMouse.x * this.size.width+Math.random()*10,
+					pMouse.y * this.size.height+Math.random()*10
+				),
+			this.params.size*Math.min(delta*this.params.velocityInfluence,0.1),
+			this.params.maxAge,
+			this.params.intensity
 		))};
 
 		this.texture.needsUpdate = true;
@@ -112,13 +125,15 @@ class Particle {
     private age:number;
     private maxAge:number;
     private position:Vector2;
+	private intensity:number;
 
-	constructor (pPosition:Vector2,pSize:number = 10,pMaxAge:number = 250){
+	constructor (pPosition:Vector2,pSize:number = 10,pMaxAge:number = 250,pIntensity:number=0.01){
 		
         this.size = pSize;
 		this.age = Date.now();
 		this.maxAge = pMaxAge * 2;
 		this.position = pPosition;
+		this.intensity = pIntensity;
 	}
 
 	draw (pCtx:CanvasRenderingContext2D){
@@ -127,7 +142,7 @@ class Particle {
 		const ageAmp = Math.abs(Math.sin(ageValue/this.maxAge));
 
 		pCtx.beginPath();
-		pCtx.fillStyle = `rgba(255,0,0,${ageAmp*0.05})`;
+		pCtx.fillStyle = `rgba(255,0,0,${ageAmp*this.intensity})`;
 		pCtx.moveTo(this.position.x, this.position.y);
 		pCtx.arc(this.position.x, this.position.y, this.size*ageAmp , 0, Math.PI*2, true);
 		pCtx.fill();

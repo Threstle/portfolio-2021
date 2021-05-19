@@ -15,8 +15,9 @@ import textFragmentShader from '../shaders/text/fragment.glsl';
 //@ts-ignore
 import textVertexShader from '../shaders/text/vertex.glsl';
 
-import { Clock, Object3D, PerspectiveCamera, Points, Scene, Vector2, WebGLRenderer } from 'three';
+import { Clock, Mesh, Object3D, PerspectiveCamera, Points, Scene, Vector2, WebGLRenderer } from 'three';
 import InteractiveTexture from './InteractiveTexture';
+import Gui from '../helpers/Gui';
 
 
 export default class InteractiveScene {
@@ -32,7 +33,13 @@ export default class InteractiveScene {
 
     private controls:OrbitControls;
 
-    private cloudPlane:Points;
+    private smokePlane:Points;
+    private domPlane:Points;
+
+    private params:{
+        backgroundColor:string;
+        textColor:string;
+    }
 
     constructor(
         pCanvas:HTMLCanvasElement,
@@ -41,19 +48,24 @@ export default class InteractiveScene {
         pPixelRatio:number = Math.min(window.devicePixelRatio, 2)
     )
     {
+        this.params = {
+            backgroundColor:"#FFFFFF",
+            textColor:"#7FE519",
+        };
+        
         this.sizes = pSizes;
         this.aspectRatio = this.sizes.x/this.sizes.y;
         
         this.scene = new Scene();
- 
+        
         this.renderer = new WebGLRenderer({
             canvas: pCanvas
         });
-
+        
         this.renderer.setSize(this.sizes.x, this.sizes.y);
         this.renderer.setPixelRatio(pPixelRatio);
-        this.renderer.setClearColor(new THREE.Color( 0xFFFFFF ));
-
+        this.renderer.setClearColor(new THREE.Color( this.params.backgroundColor ));
+        
         this.camera = new THREE.PerspectiveCamera(75, this.sizes.x / this.sizes.y, 0.1, 100);
         this.camera.position.set(0, 0, 3);
         this.scene.add(this.camera);
@@ -61,33 +73,34 @@ export default class InteractiveScene {
         // Controls
         //this.controls = new OrbitControls(this.camera, pCanvas);
         //this.controls.enableDamping = true
-
+        
         
         // Listeners
         window.addEventListener("mousemove",this.onMouseMove.bind(this));
         window.addEventListener("touchmove",this.onMouseMove.bind(this));
-
+        
         this.interactiveTexture = new InteractiveTexture(new Vector2(
             this.sizes.x/10,
             this.sizes.y/10
         ));
-
-        this.cloudPlane = this.createCloudPlane();
-
-        this.createDomPlane(pDom)
-
+        
+        this.smokePlane = this.createSmokePlane();
+        
+        this.createDomPlane(pDom).then((pMesh:Points)=>{this.domPlane = pMesh})
+        
         //Launch animation loop
         this.clock = new Clock();
-
+        
         this.tick();
-
+        
+        this.initDebugPanel();
     }
 
     // Create objects
 
-    createCloudPlane()
+    createSmokePlane()
     {
-        const geometry = new THREE.PlaneGeometry(this.sizes.x*0.004, this.sizes.y*0.004, 512, 512)
+        const geometry = new THREE.PlaneGeometry(this.sizes.x*0.004, this.sizes.y*0.004, 128, 128)
 
         // Material
         const material = new THREE.ShaderMaterial({
@@ -95,18 +108,14 @@ export default class InteractiveScene {
             fragmentShader: backgroundFragmentShader,
             uniforms:
             {
-                uTime: { value: 0 },
-                uMouse: {value:new THREE.Vector2(0,0)},
-                uSpherePosition:{value: new THREE.Vector3(0,0,0)},
-                uHorizontalDisplacementIntensity:{value:0.019},
-                uVerticalDisplacementIntensity:{value:0.1},
+                uDisplacementAmount: { value: 0.1 },
                 uDisplacementTexture:{value:this.interactiveTexture.texture}
                 
             }
         });
 
         // Mesh
-        const mesh = new THREE.Points(geometry, material);
+        const mesh = new Points(geometry, material);
 
         this.scene.add(mesh);
 
@@ -117,6 +126,8 @@ export default class InteractiveScene {
 
     createDomPlane(pDomElement:HTMLElement)
     {
+        return new Promise((resolve:any,reject:any)=>{
+
             html2canvas(pDomElement).then(domCanvas => {
                 const domTexture = new THREE.Texture(domCanvas);
                 domTexture.needsUpdate = true;
@@ -136,17 +147,21 @@ export default class InteractiveScene {
                     fragmentShader: textFragmentShader,
                     uniforms:
                     {
-                        uTime: { value: 0 },
-                        uMouse: {value:new THREE.Vector2(0,0)},
                         uDisplacementTexture:{value:this.interactiveTexture.texture},
-                        uDomTexture:{value:domTexture}
+                        uDomTexture:{value:domTexture},
+                        uDisplacedColor:{value:new THREE.Color(this.params.textColor)}
                         
                     }
                 })
         
                 const domMesh = new THREE.Points(domGeometry,domMaterial);
                 this.scene.add(domMesh);
+                
+                resolve(domMesh);
             });
+        });
+
+
     }
 
     // Animations
@@ -180,11 +195,29 @@ export default class InteractiveScene {
         pCamera.updateProjectionMatrix();
     }
 
+    initDebugPanel()
+    {
+
+
+        const guiSceneFolder = Gui.addFolder('WebGL Scene');
+        guiSceneFolder.addColor(this.params,"backgroundColor").onChange((pColor)=>{
+            this.renderer.setClearColor(pColor)
+        });
+
+        const smokeShaderFolder = Gui.addFolder('Smoke Shader');
+        //@ts-ignore
+        smokeShaderFolder.add(this.smokePlane.material.uniforms.uDisplacementAmount,'value',0.01,1.0,0.001);
+        
+        const textShaderFolder = Gui.addFolder('Text Shader');
+        textShaderFolder.addColor(this.params,'textColor').onChange((pColor)=>{
+            //@ts-ignore
+            this.domPlane.material.uniforms.uDisplacedColor.value = new THREE.Color(pColor);
+        })
+    }
+
     // Handlers
 
     onMouseMove(e:any){
-
-        console.log(e);
 
         if(!e?.clientX){
             e.clientX = e?.touches[0].clientX;
