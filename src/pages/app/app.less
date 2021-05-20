@@ -1,30 +1,29 @@
-@import (reference) "../../references.less";
+@import "../../references.less";
 
 // ----------------------------------------------------------------------------- CONFIG
 
 //Component name
 @COMPONENT: App;
 
+
 .App {
 
   h1 {
-    
-    .font-roboto-regular();
-    font-size: 10vw;
 
+    .font-montserrat-black();
+    font-size: 10vw;
   }
 
   h2 {
+    .font-montserrat-black();
     margin-top: 10px;
-    font-size: 8vw;
+    font-size : 8vw;
+    color     : grey;
   }
-
+  
   p{
-    width: 80%;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 10px;
-    line-height: 25px;
+    font-size: 4vw;
+    line-height:5vw;
   }
 
   // ----------------------------------------------------------------------------- BLOCK
@@ -37,26 +36,60 @@
     width         : 100%;
     height        : 100%;
     pointer-events: none;
-    
+
     @media (min-width: @breakpoint-tablet) {
-     // opacity       : 0.9;
+      // opacity       : 0.9;
     }
   }
 
+
   &_container {
-    position        : absolute;
-    top             : 0;
-    left            : 0;
-    width           : 100%;
-    height          : 100%;
-    display         : flex;
-    flex-direction  : column;
-    justify-content : center;
-    align-items     : center;
-   // background-color: rgba(229, 196, 161, 0.2);
+    position           : absolute;
+    top                : 0;
+    left               : 0;
+    width              : 100%;
+    height             : 100%;
+    display            : flex;
+    flex-direction     : column;
+    justify-content    : flex-end;
+    align-items        : center;
+    // background-color: rgba(229, 196, 161, 0.2);
   }
+
+
+  &_wrapper{
+    z-index: -1;
+    padding   : 2rem;
+
+  }
+
   &_textWrapper {
-    text-align: center;
+    .font-esteban-regular();
+    //text-align: center;
+    display: flex;
+    //justify-content: center;
+    align-items: center;
+    //flex-grow: 1;
+
+    margin-top  : 10px;
+    line-height : 25px;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 2rem;
+
+  }
+
+  &_cherAmi{
+    color:@cher-ami-blue-color;
+    font-weight: bold;
+  }
+
+  &_link{
+    color:@green-color;
+  }
+
+  &_titleWrapper {
+    text-align: left;
     z-index   : -1;
   }
 
@@ -85,7 +118,7 @@
     margin-left    : auto;
     margin-right   : auto;
     width          : 50%;
-    max-width: 400px;
+    max-width      : 400px;
   }
 
 }

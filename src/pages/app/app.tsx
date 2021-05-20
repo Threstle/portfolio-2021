@@ -10,9 +10,6 @@ import GithubIcon from "../../components/githubIcon/githubIcon";
 import Gui, { GuiSceneFolder } from "../../helpers/Gui";
 
 
-
-
-
 interface IProps { }
 
 const componentName = "App";
@@ -32,8 +29,8 @@ function App(props: IProps) {
     const interactiveSceneRef = useRef<InteractiveScene>();
 
     useEffect(() => {
-        GuiSceneFolder.add(webglCanvasRef.current.style,'opacity',0,1,0.01);
-    },[]);
+        GuiSceneFolder.add(webglCanvasRef.current.style, 'opacity', 0, 1, 0.01);
+    }, []);
 
     useEffect(() => {
 
@@ -69,18 +66,32 @@ function App(props: IProps) {
     return <div className={componentName} ref={rootRef}>
         <canvas ref={webglCanvasRef} className={`${componentName}_webglCanvas`} />
         <div ref={containerRef} className={`${componentName}_container`}>
-            <span className={`${componentName}_border`} />
-            <div className={`${componentName}_textWrapper`}>
-                <h1>Etienne Chaumont</h1>
-                <h2>creative dev</h2>
-                <p>Based in Lyon. Currently looking for freelance jobs.</p>
-                <div className={`${componentName}_socialIcons`}>
-                    <TwitterIcon />
-                    <GithubIcon />
+            <div className={`${componentName}_wrapper`}>
+                <div className={`${componentName}_textWrapper`}>
+                    <p className={`${componentName}_introText`}>Based in Lyon. Currently looking for freelance jobs. I like lorem ipsum bla bla bla. I just left a position at <span className={`${componentName}_cherAmi`}>Cher Ami.</span> Please <span className={`${componentName}_link`}>contact me</span> if you want us to work together.</p>
+                </div>
+                <div className={`${componentName}_titleWrapper`}>
+                    <h1>Etienne Chaumont</h1>
+                    <h2>creative dev</h2>
+            
+                
                 </div>
             </div>
+            <span className={`${componentName}_border`} />
+            
         </div>
     </div>;
 };
 
 export default App;
+
+/*
+ <div className={`${componentName}_socialIcons`}>
+                    <TwitterIcon />
+                    <GithubIcon />
+                </div>*
+                
+                
+                      <p>Based in Lyon. Currently looking for freelance jobs.</p>
+                
+                */
