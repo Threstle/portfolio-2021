@@ -8,13 +8,23 @@
 .App {
 
   h1 {
+    
     .font-roboto-regular();
     font-size: 10vw;
 
   }
 
   h2 {
+    margin-top: 10px;
     font-size: 8vw;
+  }
+
+  p{
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    line-height: 25px;
   }
 
   // ----------------------------------------------------------------------------- BLOCK
@@ -27,7 +37,10 @@
     width         : 100%;
     height        : 100%;
     pointer-events: none;
-    opacity       : 0.9;
+    
+    @media (min-width: @breakpoint-tablet) {
+     // opacity       : 0.9;
+    }
   }
 
   &_container {
@@ -40,23 +53,28 @@
     flex-direction  : column;
     justify-content : center;
     align-items     : center;
-    background-color: rgba(229, 196, 161, 0.2);
+   // background-color: rgba(229, 196, 161, 0.2);
   }
-
   &_textWrapper {
     text-align: center;
     z-index   : -1;
   }
 
-  &_border {
+  /*&_border {
     position: absolute;
-    width   : calc(100% - 60px);
-    height  : calc(100% - 60px);
     top     : 0;
     z-index : -1;
     left    : 0;
-    border  : solid 30px;
-  }
+    border  : solid 10px;
+    height  : calc(100% - 20px);
+    width   : calc(100% - 20px);
+    
+    @media (min-width: @breakpoint-tablet) {
+      height  : calc(100% - 60px);
+      width   : calc(100% - 60px);
+      border  : solid 30px;
+    }
+  }*/
 
   &_socialIcons {
     display        : flex;

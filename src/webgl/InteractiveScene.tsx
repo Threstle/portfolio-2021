@@ -34,7 +34,7 @@ export default class InteractiveScene {
     private controls: OrbitControls;
 
     private smokePlane: Points;
-    private domPlane: Mesh;
+    private domPlane: Object3D;
 
     private params: {
         backgroundColor: string;
@@ -144,11 +144,12 @@ export default class InteractiveScene {
                 uDomTexture: { value: new Texture() },
                 uDisplacedColor: { value: new THREE.Color(this.params.textColor) },
                 uDisplacementAmount: { value: 0.311 },
-                uTime: { value: 0 }
+                uTime: { value: 0 },
+                uPointSize:{value:7.97}
 
             }
         })
-        const domMesh = new THREE.Mesh(domGeometry, domMaterial);
+        const domMesh = new THREE.Points(domGeometry, domMaterial);
         this.scene.add(domMesh);
 
         this.updateDomTexture(pDomElement);
@@ -240,6 +241,8 @@ export default class InteractiveScene {
 
         //@ts-ignore
         GuiTextShader.add(this.domPlane.material.uniforms.uDisplacementAmount, 'value', 0.0, 2.0, 0.001).name('displacement');
+        //@ts-ignore
+        GuiTextShader.add(this.domPlane.material.uniforms.uPointSize, 'value', 0.01, 30.0, 0.001).name('points size');
     }
 
     // Handlers

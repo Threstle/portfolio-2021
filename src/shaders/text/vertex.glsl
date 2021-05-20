@@ -1,8 +1,17 @@
+#define PI 3.1415926535897932384626433832795
+
 uniform sampler2D uDisplacementTexture;
 uniform sampler2D uDomTexture;
 uniform float uDisplacementAmount;
-
+uniform float uPointSize;
 varying vec2 vUv;
+varying float vDisplacement;
+
+float random (vec2 st) {
+    return fract(sin(dot(st.xy,
+                         vec2(12.9898,78.233)))*
+        43758.5453123);
+}
 
 void main()
 {
@@ -12,16 +21,18 @@ void main()
     vec4 displacementTextCoord = texture2D(uDisplacementTexture,uv);
     vec4 textCoord = texture2D(uDomTexture,uv);
 
-    // On displace les vertex en fonction de la texture de displacement et on cache les points sur les zones blanches
-    modelPosition.z += displacementTextCoord.r*uDisplacementAmount;
-    modelPosition.x += displacementTextCoord.r*uDisplacementAmount*0.4;
-    modelPosition.y -= displacementTextCoord.r*uDisplacementAmount*0.2;
+    float randAngle = random(uv)*PI*2.0;
+    modelPosition.y += cos(randAngle)*displacementTextCoord.r*uDisplacementAmount;
+    modelPosition.x += sin(randAngle)*displacementTextCoord.r*uDisplacementAmount;
+    modelPosition.z += sin(randAngle)*displacementTextCoord.r*uDisplacementAmount;
 
     vec4 viewPosition = viewMatrix * modelPosition;
 
     vec4 projectedPosition = projectionMatrix * viewPosition;
 
     gl_Position = projectedPosition;
-
+    gl_PointSize = uPointSize*randAngle;
+    
     vUv = uv;
+
 }

@@ -4,6 +4,7 @@ uniform vec3 uDisplacedColor;
 uniform float uTime;
 
 varying vec2 vUv;
+varying vec2 vDisplacement;
 
 
 void main()

@@ -20,6 +20,7 @@ export default class InteractiveTexture {
 	protected params: {
 		maxAge: number;
 		size: number;
+		maxSize: number
 		maxParticles: number;
 		velocityInfluence: number;
 		intensity: number;
@@ -41,6 +42,7 @@ export default class InteractiveTexture {
 		this.params = {
 			maxAge: 109,
 			size: 500,
+			maxSize: 10,
 			maxParticles: 600,
 			velocityInfluence: 0.6,
 			intensity: 0.164
@@ -48,6 +50,7 @@ export default class InteractiveTexture {
 
 		GuiDisplacementTexture.add(this.params, "maxAge", 5, 500, 1);
 		GuiDisplacementTexture.add(this.params, "size", 10, 2000, 1);
+		GuiDisplacementTexture.add(this.params, "maxSize", 0.1, 50, 1);
 		GuiDisplacementTexture.add(this.params, "maxParticles", 50, 1500, 1);
 		GuiDisplacementTexture.add(this.params, "velocityInfluence", 0, 2, 0.01);
 		GuiDisplacementTexture.add(this.params, "intensity", 0.01, 1, 0.001);
@@ -101,7 +104,7 @@ export default class InteractiveTexture {
 					pMouse.x * this.size.width + Math.random() * 10,
 					pMouse.y * this.size.height + Math.random() * 10
 				),
-				this.params.size * Math.min(delta * this.params.velocityInfluence, 0.1),
+				Math.min(this.params.size * Math.min(delta * this.params.velocityInfluence, 0.1),this.params.maxSize),
 				this.params.maxAge,
 				this.params.intensity
 			))
