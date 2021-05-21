@@ -62,34 +62,6 @@
 
   }
 
-  &_gallery
-  {
-    display: grid;
-    grid-template-columns: repeat(4, calc(25% - 0.5rem));
-    grid-column-gap: 10px;
-    grid-row-gap: 10px;
-    width: 100%;
-    margin-bottom: 2rem;
-
-    
-    video:nth-child(1)
-    {
-     // grid-column: 1/1;
-     // grid-row: 1/1;
-    }
-  }
-
-  &_galleryItem
-  {
-    width: 100%;
-    height: 100%;
-    
-    &:not(video)
-    {
-      background-color: black;
-
-    }
-  }
 
   &_textWrapper {
     .font-esteban-regular();

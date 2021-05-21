@@ -1,0 +1,37 @@
+@import (reference) "../../references.less";
+
+// ----------------------------------------------------------------------------- CONFIG
+
+//Component name
+@COMPONENT: Gallery;
+
+.Gallery {
+    display              : grid;
+    position             : relative;
+    grid-template-columns: repeat(4, calc(25% - 0.5rem));
+    grid-template-rows: repeat(3, calc(33% - 0.5rem));
+    grid-column-gap      : 10px;
+    grid-row-gap         : 10px;
+    width                : 100%;
+    margin-bottom        : 2rem;
+
+
+
+    &_galleryItem {
+        position: relative;
+        width : 100%;
+        height: auto;
+
+        &:not(video) {
+            background-color: black;
+
+        }
+    }
+}
+
+// ----------------------------------------------------------------------------- MODIFIERS
+
+
+// ----------------------------------------------------------------------------- CHILDREN
+
+// ----------------------------------------------------------------------------- PATCHES

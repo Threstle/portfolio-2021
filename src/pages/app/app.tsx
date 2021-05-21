@@ -5,16 +5,10 @@ import { Vector2 } from "three";
 import './app.less';
 
 import InteractiveScene from "../../webgl/InteractiveScene";
-import TwitterIcon from "../../components/twitterIcon/twitterIcon";
-import GithubIcon from "../../components/githubIcon/githubIcon";
-import Gui, { GuiSceneFolder } from "../../helpers/Gui";
+import { GuiSceneFolder } from "../../helpers/Gui";
 import FocusedElement from "../../components/focusedElement/focusedElement";
 import InteractiveTexture from "../../webgl/InteractiveTexture";
-
-const experience1Video = require('../../static/videos/experience1.mp4');
-const experience2Video = require('../../static/videos/experience2.mp4');
-const experience3Video = require('../../static/videos/experience3.mp4');
-const experience4Video = require('../../static/videos/experience4.mp4');
+import Gallery from "../../components/gallery/gallery";
 
 interface IProps { }
 
@@ -80,22 +74,8 @@ function App(props: IProps) {
     return <div className={componentName} ref={rootRef}>
         <canvas ref={webglCanvasRef} className={`${componentName}_webglCanvas`} />
         <div ref={containerRef} className={`${componentName}_container`}>
-       
             <div className={`${componentName}_wrapper`}>
-            <div className={`${componentName}_gallery`}>
-            <span className={`${componentName}_galleryItem`}/>
-            <video className={`${componentName}_galleryItem`} autoPlay={true} playsInline={true} muted={true} loop={true} src={experience1Video.default}/>
-            <span className={`${componentName}_galleryItem`}/>
-            <span className={`${componentName}_galleryItem`}/>
-            <span className={`${componentName}_galleryItem`}/>
-            <span className={`${componentName}_galleryItem`}/>
-            <video className={`${componentName}_galleryItem`} autoPlay={true} playsInline={true} muted={true} loop={true} src={experience2Video.default}/>
-            <span className={`${componentName}_galleryItem`}/>
-            <video className={`${componentName}_galleryItem`} autoPlay={true} playsInline={true} muted={true} loop={true} src={experience3Video.default}/>
-            <span className={`${componentName}_galleryItem`}/>
-            <span className={`${componentName}_galleryItem`}/>
-            <video className={`${componentName}_galleryItem`} autoPlay={true} playsInline={true} muted={true} loop={true} src={experience4Video.default}/>
-        </div>
+            <Gallery/>
                 <div className={`${componentName}_textWrapper`}>
                     <p className={`${componentName}_introText`}>Based in Lyon. Currently looking for freelance jobs. I like lorem ipsum bla bla bla. I just left a position at <FocusedElement onFocusChange={onFocus} className={`${componentName}_link ${componentName}_link-cherAmi`}><a href="https://cher-ami.tv" target="_blank">Cher Ami.</a></FocusedElement> Please <FocusedElement onFocusChange={onFocus} className={`${componentName}_link`}><a href="mailto:etienne.chaumont@gmail.com">contact me</a></FocusedElement> if you want us to work together.</p>
                 </div>

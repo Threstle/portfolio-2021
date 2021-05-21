@@ -143,7 +143,7 @@ export default class InteractiveScene {
                 uDisplacedColor: { value: new THREE.Color(this.params.textColor) },
                 uDisplacementAmount: { value: 0.269 },
                 uTime: { value: 0 },
-                uPointSize:{value:7.97}
+                uPointSize:{value:3.97}
 
             }
         })
