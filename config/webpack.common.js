@@ -57,6 +57,18 @@ module.exports = {
                     name: '[path][name].[ext]'
                 }
             },
+            {
+                test: /\.mp4$/,
+                use: [
+                    {
+                        loader: "file-loader",
+                        options: {
+                            name: "[name].[ext]",
+                            outputPath: "video"
+                        }
+                    }
+                ]
+            },
             // Images
             {
                 test: /\.(jpg|png|gif|svg)$/,

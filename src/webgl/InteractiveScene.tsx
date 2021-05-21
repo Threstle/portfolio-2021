@@ -46,6 +46,7 @@ export default class InteractiveScene {
         pCanvas: HTMLCanvasElement,
         pSizes: Vector2,
         pDom: HTMLElement,
+        pInteractiveTexture:InteractiveTexture,
         pPixelRatio: number = Math.min(window.devicePixelRatio, 2),
     ) {
         this.params = {
@@ -83,10 +84,7 @@ export default class InteractiveScene {
         window.addEventListener("touchstart", this.onMouseMove.bind(this));
         window.addEventListener("touchend", this.onTouchEnd.bind(this));
 
-        this.interactiveTexture = new InteractiveTexture(new Vector2(
-            this.sizes.x / 10,
-            this.sizes.y / 10
-        ));
+        this.interactiveTexture = pInteractiveTexture;
 
         this.smokePlane = this.createSmokePlane();
 
@@ -143,7 +141,7 @@ export default class InteractiveScene {
                 uDisplacementTexture: { value: this.interactiveTexture.texture },
                 uDomTexture: { value: new Texture() },
                 uDisplacedColor: { value: new THREE.Color(this.params.textColor) },
-                uDisplacementAmount: { value: 0.311 },
+                uDisplacementAmount: { value: 0.269 },
                 uTime: { value: 0 },
                 uPointSize:{value:7.97}
 

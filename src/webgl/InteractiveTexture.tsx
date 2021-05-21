@@ -17,6 +17,8 @@ export default class InteractiveTexture {
 
 	protected debugPanel: boolean;
 
+	protected isFocused:boolean = false;
+
 	protected params: {
 		maxAge: number;
 		size: number;
@@ -28,7 +30,7 @@ export default class InteractiveTexture {
 
 	public texture: Texture;
 
-	constructor(pSize: Vector2,pDebugPanel:boolean = false) {
+	constructor(pSize: Vector2) {
 
 		this.size = pSize;
 
@@ -85,9 +87,28 @@ export default class InteractiveTexture {
 
 		this.ctx.fillStyle = 'rgba(0, 0, 0, .05)';
 		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-		this.particleTab.forEach((particle, index) => {
+	
+		this.processParticleArray(this.particleTab);
+
+		let delta = this.oldMouse?.distanceTo(pMouse) || 0;
+		if (this?.oldMouse?.x == 0 && this?.oldMouse?.y == 0 || pMouse.x == 0 && pMouse.y == 0) delta = 0;
+
+		if(this.isFocused)delta += 0.001;
+
+		if (this.particleTab.length < this.params.maxParticles && delta > 0) {
+			//
+			this.particleTab.push(this.createParticle(pMouse,delta));
+		};
+
+		this.texture.needsUpdate = true;
+		if (!this.oldMouse) this.oldMouse = new Vector2(0, 0);
+		this.oldMouse.set(pMouse.x, pMouse.y);
+	}
+
+	processParticleArray(pArray:Particle[]){
+		pArray.forEach((particle, index) => {
 			if (particle.isTooOld()) {
-				this.particleTab.splice(index, 1);
+				pArray.splice(index, 1);
 
 			}
 			else {
@@ -96,28 +117,28 @@ export default class InteractiveTexture {
 
 
 		})
-		let delta = this.oldMouse?.distanceTo(pMouse) || 0;
-		if (this?.oldMouse?.x == 0 && this?.oldMouse?.y == 0 || pMouse.x == 0 && pMouse.y == 0) delta = 0;
-		if (this.particleTab.length < this.params.maxParticles && delta > 0) {
-			this.particleTab.push(new Particle(
-				new Vector2(
-					pMouse.x * this.size.width + Math.random() * 10,
-					pMouse.y * this.size.height + Math.random() * 10
-				),
-				Math.min(this.params.size * Math.min(delta * this.params.velocityInfluence, 0.1),this.params.maxSize),
-				this.params.maxAge,
-				this.params.intensity
-			))
-		};
+	}
 
-		this.texture.needsUpdate = true;
-		if (!this.oldMouse) this.oldMouse = new Vector2(0, 0);
-		this.oldMouse.set(pMouse.x, pMouse.y);
+	createParticle(pPosition:Vector2,pDelta:number){
+		return new Particle(
+			new Vector2(
+				pPosition.x * this.size.width + Math.random() * 10,
+				pPosition.y * this.size.height + Math.random() * 10
+			),
+			Math.min(this.params.size * Math.min(pDelta * this.params.velocityInfluence, 0.1),this.params.maxSize),
+			this.params.maxAge,
+			this.params.intensity
+		)
 	}
 
 	clear() {
 		this.ctx.fillStyle = 'black';
 		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+	}
+
+	public setFocus(pBoolean:boolean)
+	{
+		this.isFocused = pBoolean;
 	}
 
 }
