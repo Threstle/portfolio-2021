@@ -27,19 +27,16 @@ function Gallery(props: IProps) {
     return <div
         ref={rootRef}
         className={`${componentName} ${props.className}`}
-        >
-            <span className={`${componentName}_galleryItem`} />
-            <video className={`${componentName}_galleryItem`} autoPlay={true} playsInline={true} muted={true} loop={true} src={experience1Video.default} />
-            <span className={`${componentName}_galleryItem`} />
-            <span className={`${componentName}_galleryItem`} />
-            <span className={`${componentName}_galleryItem`} />
-            <span className={`${componentName}_galleryItem`} />
-            <video className={`${componentName}_galleryItem`} autoPlay={true} playsInline={true} muted={true} loop={true} src={experience2Video.default} />
-            <span className={`${componentName}_galleryItem`} />
-            <video className={`${componentName}_galleryItem`} autoPlay={true} playsInline={true} muted={true} loop={true} src={experience3Video.default} />
-            <span className={`${componentName}_galleryItem`} />
-            <span className={`${componentName}_galleryItem`} />
-            <video className={`${componentName}_galleryItem`} autoPlay={true} playsInline={true} muted={true} loop={true} src={experience4Video.default} />
+    >
+        <span className={`${componentName}_galleryItem`} />
+        <video className={`${componentName}_galleryItem`} autoPlay={true} playsInline={true} muted={true} loop={true} src={experience1Video.default} />
+        <span className={`${componentName}_galleryItem`} />
+        <span className={`${componentName}_galleryItem`} />
+        <video className={`${componentName}_galleryItem`} autoPlay={true} playsInline={true} muted={true} loop={true} src={experience2Video.default} />
+        <span className={`${componentName}_galleryItem`} />
+        <video className={`${componentName}_galleryItem`} autoPlay={true} playsInline={true} muted={true} loop={true} src={experience3Video.default} />
+        <span className={`${componentName}_galleryItem`} />
+        <video className={`${componentName}_galleryItem`} autoPlay={true} playsInline={true} muted={true} loop={true} src={experience4Video.default} />
     </div>
 };
 

@@ -62,8 +62,7 @@ export default class InteractiveTexture {
 	initTexture() {
 		this.canvas = document.createElement('canvas');
 
-		this.canvas.width = this.size.width;
-		this.canvas.height = this.size.height;
+		this.resize(this.size);
 
 		this.ctx = this.canvas.getContext('2d');
 		this.ctx.fillStyle = 'black';
@@ -72,8 +71,6 @@ export default class InteractiveTexture {
 		this.texture = new THREE.Texture(this.canvas);
 
 		this.canvas.id = 'touchTexture';
-		this.canvas.style.width = `${this.canvas.width}px`;
-		this.canvas.style.height = `${this.canvas.height}px`;
 
 		this.canvas.style.float = "right";
 		this.canvas.style.marginTop = "20px";
@@ -96,13 +93,22 @@ export default class InteractiveTexture {
 		if(this.isFocused)delta += 0.001;
 
 		if (this.particleTab.length < this.params.maxParticles && delta > 0) {
-			//
+			
 			this.particleTab.push(this.createParticle(pMouse,delta));
 		};
 
 		this.texture.needsUpdate = true;
 		if (!this.oldMouse) this.oldMouse = new Vector2(0, 0);
 		this.oldMouse.set(pMouse.x, pMouse.y);
+	}
+
+	public resize(pSize:Vector2){
+		this.size = pSize;
+
+		this.canvas.width = this.size.width;
+		this.canvas.height = this.size.height;
+		this.canvas.style.width = `${this.canvas.width}px`;
+		this.canvas.style.height = `${this.canvas.height}px`;
 	}
 
 	processParticleArray(pArray:Particle[]){

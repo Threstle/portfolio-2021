@@ -30,7 +30,22 @@ function App(props: IProps) {
 
     const interactiveTextureRef = useRef<InteractiveTexture>();
 
+    // States
+    const [isLandscape,setIsLandscape] = useState<boolean>(false);
+
+    
+
     useEffect(() => {
+
+        window.addEventListener('resize',()=>{
+        
+         const size = new Vector2(window.innerWidth, window.innerHeight);
+
+         interactiveTextureRef.current.resize(new Vector2(size.x / 10, size.y / 10))
+         interactiveSceneRef.current.onResize(size);
+         interactiveSceneRef.current.updateDomTexture(containerRef.current);
+        });
+
         GuiSceneFolder.add(webglCanvasRef.current.style, 'opacity', 0, 1, 0.01);
     }, []);
 
@@ -75,7 +90,7 @@ function App(props: IProps) {
         <canvas ref={webglCanvasRef} className={`${componentName}_webglCanvas`} />
         <div ref={containerRef} className={`${componentName}_container`}>
             <div className={`${componentName}_wrapper`}>
-            <Gallery/>
+            {!isLandscape && <Gallery/>}
                 <div className={`${componentName}_textWrapper`}>
                     <p className={`${componentName}_introText`}>Based in Lyon. Currently looking for freelance jobs. I like lorem ipsum bla bla bla. I just left a position at <FocusedElement onFocusChange={onFocus} className={`${componentName}_link ${componentName}_link-cherAmi`}><a href="https://cher-ami.tv" target="_blank">Cher Ami.</a></FocusedElement> Please <FocusedElement onFocusChange={onFocus} className={`${componentName}_link`}><a href="mailto:etienne.chaumont@gmail.com">contact me</a></FocusedElement> if you want us to work together.</p>
                 </div>

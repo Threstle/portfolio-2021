@@ -36,6 +36,8 @@ export default class InteractiveScene {
     private smokePlane: Points;
     private domPlane: Object3D;
 
+    private domCanvas:HTMLCanvasElement;
+
     private params: {
         backgroundColor: string;
         textColor: string;
@@ -73,10 +75,7 @@ export default class InteractiveScene {
         this.camera.position.set(0, 0, 3);
         this.scene.add(this.camera);
 
-        // Controls
-        //this.controls = new OrbitControls(this.camera, pCanvas);
-        //this.controls.enableDamping = true
-
+        document.querySelector('.dg.main.a').append(this.domCanvas);
 
         // Listeners
         window.addEventListener("mousemove", this.onMouseMove.bind(this));
@@ -167,20 +166,23 @@ export default class InteractiveScene {
             item.style.height = null;
         });
 
-        html2canvas(pDomElement).then(domCanvas => {
+        html2canvas(pDomElement).then(pDomCanvas => {
 
-            const domTexture = new THREE.Texture(domCanvas);
+            this.domCanvas = pDomCanvas
+           // this.domCanvas.width = pDomCanvas.width;
+           // this.domCanvas.height = pDomCanvas.height;
+           // this.domCanvas.getContext('2d').drawImage(pDomCanvas,0,0);
+
+            const domTexture = new THREE.Texture(this.domCanvas);
 
             domTexture.needsUpdate = true;
-            //  pDomElement.style.display = "none";
 
             domTexture.magFilter = THREE.NearestFilter;
-            //domTexture.generateMipmaps = false;
 
             //@ts-ignore
             this.domPlane.material.uniforms.uDomTexture.value = domTexture;
 
-            document.querySelector('.dg.main.a').append(domCanvas);
+            
 
         });
     }
@@ -263,14 +265,15 @@ export default class InteractiveScene {
         this.mouse.set(0, 0);
     }
 
-    onResize(pSize: Vector2) {
+    public onResize(pSize: Vector2) {
 
         this.sizes = pSize;
         this.aspectRatio = this.sizes.x / this.sizes.y;
 
         this.camera.aspect = this.aspectRatio;
-        this.camera.updateProjectionMatrix()
+        //this.camera.updateProjectionMatrix()
 
-        this.renderer.setSize(this.sizes.width, this.sizes.height)
+        this.renderer.setSize(this.sizes.x, this.sizes.y)
     }
+
 }

@@ -8,13 +8,20 @@
 .Gallery {
     display              : grid;
     position             : relative;
-    grid-template-columns: repeat(4, calc(25% - 0.5rem));
+    grid-template-columns: repeat(3, calc(33% - 0.5rem));
     grid-template-rows: repeat(3, calc(33% - 0.5rem));
     grid-column-gap      : 10px;
     grid-row-gap         : 10px;
     width                : 100%;
     margin-bottom        : 2rem;
-
+    
+    @media (orientation:landscape) {
+        width: 25%;
+        position: absolute;
+        right: 8rem;
+        bottom: 1rem;
+        grid-template-columns: repeat(3, calc(33% - 0.5rem));
+    }
 
 
     &_galleryItem {
