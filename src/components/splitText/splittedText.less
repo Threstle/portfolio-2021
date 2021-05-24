@@ -3,20 +3,16 @@
 // ----------------------------------------------------------------------------- CONFIG
 
 //Component name
-@COMPONENT: App;
+@COMPONENT: SplittedText;
 
-.TwitterIcon {
-    cursor: pointer;
-    width: 40px;
-    margin-left: auto;
-    margin-right: auto;
-    
-    @media (min-width: @breakpoint-tablet) {
-        width: 80px;
+.SplittedText {
+    overflow: hidden;
+    span
+    {
+        display: inline-block;
+        margin: 0.1rem;
     }
 }
-
-
 
 // ----------------------------------------------------------------------------- MODIFIERS
 

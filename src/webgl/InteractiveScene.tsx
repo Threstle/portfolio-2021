@@ -37,6 +37,7 @@ export default class InteractiveScene {
     private domPlane: Object3D;
 
     private domCanvas:HTMLCanvasElement;
+    private domUpdatedCallback:()=>void;
 
     private params: {
         backgroundColor: string;
@@ -49,6 +50,7 @@ export default class InteractiveScene {
         pSizes: Vector2,
         pDom: HTMLElement,
         pInteractiveTexture:InteractiveTexture,
+        pDomUpdatedCallback:()=>void = ()=>{},
         pPixelRatio: number = Math.min(window.devicePixelRatio, 2),
     ) {
         this.params = {
@@ -56,6 +58,8 @@ export default class InteractiveScene {
             alpha: 0,
             textColor: "#7FE519",
         };
+
+        this.domUpdatedCallback = pDomUpdatedCallback;
 
         this.sizes = pSizes;
         this.aspectRatio = this.sizes.x / this.sizes.y;
@@ -149,13 +153,13 @@ export default class InteractiveScene {
         const domMesh = new THREE.Points(domGeometry, domMaterial);
         this.scene.add(domMesh);
 
-        this.updateDomTexture(pDomElement);
+        this.updateDomTexture(pDomElement,this?.domUpdatedCallback);
 
         return domMesh;
 
     }
 
-    updateDomTexture(pDomElement: HTMLElement) {
+    updateDomTexture(pDomElement: HTMLElement,pCallback=()=>{}) {
 
         //Hack pour afficher les éléments SVG. Isabella Lopes : https://stackoverflow.com/questions/32481054/svg-not-displayed-when-using-html2canvas
         var svgElements = pDomElement.querySelectorAll('svg');
@@ -183,7 +187,7 @@ export default class InteractiveScene {
             this.domPlane.material.uniforms.uDomTexture.value = domTexture;
 
             
-
+            pCallback();
         });
     }
 
