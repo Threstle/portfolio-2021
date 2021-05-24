@@ -29,8 +29,12 @@ function Gallery(props: IProps) {
     const blockRef = useRef([]);
     const videoRef = useRef<HTMLVideoElement>(null);
 
-    const currentBlock = useRef<number>(0);
+    const [currentBlockIndex,setCurrentBlockIndex] = useState<number>(0);
 
+
+    useEffect(()=>{
+        window.addEventListener('resize',moveToCurrentBlock);
+    },[])
 
     useEffect(() => {
         if (!props.animTrigger) return;
@@ -55,7 +59,11 @@ function Gallery(props: IProps) {
             })
         });
 
-    }, [props.animTrigger])
+    }, [props.animTrigger]);
+
+    useEffect(()=>{
+        moveToCurrentBlock();
+    },[currentBlockIndex])
 
     useEffect(() => {
 
@@ -71,23 +79,20 @@ function Gallery(props: IProps) {
             gsap.set(pBorder, borderDirection);
         })
         
-        let randomBlock = getRandomBlock();
-
-        gsap.set(videoRef.current,{
-            x:randomBlock?.offsetLeft-1,
-            y:randomBlock?.offsetTop -1,
-            height:randomBlock?.getBoundingClientRect().height +2,
-            width:randomBlock?.getBoundingClientRect().width +2
-        })
-
-
-
+        setCurrentBlockIndex(Math.round(Math.random()*blockRef.current.length-1));
 
     }, [props.isVisible])
 
-    const moveToRandomBlock = (pVideo:HTMLVideoElement)=>{
-
-        let randomBlock = getRandomBlock();
+    const moveToCurrentBlock = ()=>{
+        const currentBlock = blockRef.current[currentBlockIndex] as HTMLDivElement;
+        gsap.set(videoRef.current,{
+            x:currentBlock?.offsetLeft-1,
+            y:currentBlock?.offsetTop -1,
+            height:currentBlock?.getBoundingClientRect().height +2,
+            width:currentBlock?.getBoundingClientRect().width +2
+        })
+/*
+        let randomBlock = setRandomBlock();
 
         gsap.to(videoRef.current,{
             opacity:0,
@@ -112,19 +117,8 @@ function Gallery(props: IProps) {
                 })
             }
         });
-
+*/
      
-    }
-
-    const getRandomBlock = ()=>{
-        const randomIndex = Math.round(Math.random()*blockRef.current.length-1);
-        currentBlock.current = randomIndex;
-        const chosenBlock = blockRef.current[randomIndex] as HTMLDivElement;
-        return chosenBlock;
-    }
-
-    const getRandomNeighbourBlock = ()=>{
-        
     }
 
     // -------------------–-------------------–-------------------–--------------- REGISTER PAGE
