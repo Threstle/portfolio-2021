@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import * as dat from 'dat.gui'
 import { Texture, Vector2 } from 'three';
 import Gui, { GuiDisplacementTexture } from '../helpers/Gui';
+import { EDeviceType, EnvUtils } from '../lib/utils/EnvUtils';
 
 export default class InteractiveTexture {
 
@@ -43,10 +44,10 @@ export default class InteractiveTexture {
 		// Debug
 		this.params = {
 			maxAge: 109,
-			size: 500,
+			size: 500/10,
 			maxSize: 10,
 			maxParticles: 600,
-			velocityInfluence: 0.6,
+			velocityInfluence: EnvUtils.getDeviceType()===EDeviceType.DESKTOP? 0.27 : 0.4,
 			intensity: 0.164
 		}
 
@@ -128,10 +129,10 @@ export default class InteractiveTexture {
 	createParticle(pPosition:Vector2,pDelta:number){
 		return new Particle(
 			new Vector2(
-				pPosition.x * this.size.width + Math.random() * 10,
-				pPosition.y * this.size.height + Math.random() * 10
+				pPosition.x * this.size.width + Math.random() * 10 / 100,
+				pPosition.y * this.size.height + Math.random() * 10 / 100
 			),
-			Math.min(this.params.size * Math.min(pDelta * this.params.velocityInfluence, 0.1),this.params.maxSize),
+			Math.min(this.params.size* 0.1 * this.size.width * Math.min(pDelta * this.params.velocityInfluence, 0.1),this.params.maxSize),
 			this.params.maxAge,
 			this.params.intensity
 		)

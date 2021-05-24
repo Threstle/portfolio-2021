@@ -69,7 +69,7 @@ function App(props: IProps) {
 
             const size = new Vector2(window.innerWidth, window.innerHeight);
 
-            interactiveTextureRef.current = new InteractiveTexture(new Vector2(size.x / 10, size.y / 10));
+            interactiveTextureRef.current = new InteractiveTexture(new Vector2(size.x / 50, size.y / 50));
 
             interactiveSceneRef.current = new InteractiveScene
                 (
@@ -157,7 +157,7 @@ function App(props: IProps) {
 
         const size = new Vector2(window.innerWidth, window.innerHeight);
 
-        interactiveTextureRef?.current?.resize(new Vector2(size.x / 10, size.y / 10))
+        interactiveTextureRef?.current?.resize(new Vector2(size.x / 50, size.y / 50))
         interactiveSceneRef?.current?.onResize(size);
         interactiveSceneRef?.current?.updateDomTexture(containerRef.current);
     }
