@@ -100,7 +100,7 @@ function App(props: IProps) {
         gsap.to(veilRef.current, {
             opacity: 0,
             ease: Quint.easeInOut,
-            duration: 0.2,
+            duration: 0.5,
             onComplete: () => {
                 setAnimTrigger(true);
 
@@ -168,11 +168,11 @@ function App(props: IProps) {
                     </div>
                 </div>
                     <div className={`${componentName}_textWrapper`}>
-                        <p ref={textRef} className={`${componentName}_introText`}>Based in Lyon. Currently looking for freelance jobs. I like lorem ipsum bla bla bla bla bla bla bla bla bla bla bla bla. I just left a position at <FocusedElement onFocusChange={onFocus} className={`${componentName}_link ${componentName}_link-cherAmi`}><a href="https://cher-ami.tv" target="_blank">Cher Ami.</a></FocusedElement> Please <FocusedElement onFocusChange={onFocus} className={`${componentName}_link`}><a href="mailto:etienne.chaumont@gmail.com">contact me</a></FocusedElement> if you want us to work together.</p>
+                        <p ref={textRef} className={`${componentName}_introText`}>Graduated from Gobelins Paris. I worked for 5 years at <FocusedElement onFocusChange={onFocus} className={`${componentName}_link ${componentName}_link-cherAmi`}><a href="https://cher-ami.tv" target="_blank">Cher Ami.</a></FocusedElement> as a creative developer. Based in Lyon, France. currently available for freelance jobs. I like <i>NodeJs, ThreeJs, Pixi, Phaser Unity, Gsap, React, GLSL and free jazz.</i> Want to to meet? You can contact me <FocusedElement onFocusChange={onFocus} className={`${componentName}_link`}><a href="mailto:etienne.chaumont@gmail.com">here</a></FocusedElement>. You may also find me around here : </p>
                     </div>
 
             </div>
-
+            
         </div>
     </div>;
 };

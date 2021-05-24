@@ -27,6 +27,10 @@ function Gallery(props: IProps) {
     const bordersRef = useRef([]);
 
     const blockRef = useRef([]);
+    const videoRef = useRef<HTMLVideoElement>(null);
+
+    const currentBlock = useRef<number>(0);
+
 
     useEffect(() => {
         if (!props.animTrigger) return;
@@ -49,7 +53,7 @@ function Gallery(props: IProps) {
                 scaleY: 1,
                 delay: pIndex * 0.4
             })
-        })
+        });
 
     }, [props.animTrigger])
 
@@ -66,8 +70,62 @@ function Gallery(props: IProps) {
             const borderDirection = index % 2 == 0 ? { scaleY: 0 } : { scaleX: 0 }
             gsap.set(pBorder, borderDirection);
         })
+        
+        let randomBlock = getRandomBlock();
+
+        gsap.set(videoRef.current,{
+            x:randomBlock?.offsetLeft-1,
+            y:randomBlock?.offsetTop -1,
+            height:randomBlock?.getBoundingClientRect().height +2,
+            width:randomBlock?.getBoundingClientRect().width +2
+        })
+
+
+
 
     }, [props.isVisible])
+
+    const moveToRandomBlock = (pVideo:HTMLVideoElement)=>{
+
+        let randomBlock = getRandomBlock();
+
+        gsap.to(videoRef.current,{
+            opacity:0,
+            ease:Quint.easeInOut,
+            duration:0.5,
+            onComplete:()=>{
+
+                gsap.set(videoRef.current,{
+                    x:randomBlock.offsetLeft-1,
+                    y:randomBlock.offsetTop -1,
+                    duration:0.5,
+                    ease:Quint.easeInOut
+                })
+
+                pVideo.currentTime = 0;
+                pVideo.play();
+
+                gsap.to(videoRef.current,{
+                    opacity:1,
+                    ease:Quint.easeInOut,
+                    duration:0.5,
+                })
+            }
+        });
+
+     
+    }
+
+    const getRandomBlock = ()=>{
+        const randomIndex = Math.round(Math.random()*blockRef.current.length-1);
+        currentBlock.current = randomIndex;
+        const chosenBlock = blockRef.current[randomIndex] as HTMLDivElement;
+        return chosenBlock;
+    }
+
+    const getRandomNeighbourBlock = ()=>{
+        
+    }
 
     // -------------------–-------------------–-------------------–--------------- REGISTER PAGE
 
@@ -76,7 +134,8 @@ function Gallery(props: IProps) {
     return <div
         ref={rootRef}
         className={`${componentName} ${props.className}`}
-    >
+        >
+        <video ref={videoRef} className={`${componentName}_video`} autoPlay={true} playsInline={true} muted={true} loop={true} src={experience4Video.default} />
         <span ref={(r) => bordersRef.current[0] = r} className={`${componentName}_border ${componentName}_border-left`} />
         <span ref={(r) => bordersRef.current[1] = r} className={`${componentName}_border ${componentName}_border-top`} />
         <span ref={(r) => bordersRef.current[2] = r} className={`${componentName}_border ${componentName}_border-right`} />
@@ -84,18 +143,23 @@ function Gallery(props: IProps) {
 
         <div className={`${componentName}_container`}>
             <div ref={(r) => blockRef.current[0] = r} className={`${componentName}_galleryItem`} ></div>
-            <div ref={(r) => blockRef.current[1] = r} className={`${componentName}_galleryItem`} >
-                <video className={`${componentName}_galleryItem`} autoPlay={true} playsInline={true} muted={true} loop={true} src={experience1Video.default} />
-            </div>
+            <div ref={(r) => blockRef.current[1] = r} className={`${componentName}_galleryItem`} ></div>
             <div ref={(r) => blockRef.current[2] = r} className={`${componentName}_galleryItem`} ></div>
             <div ref={(r) => blockRef.current[3] = r} className={`${componentName}_galleryItem`} ></div>
             <div ref={(r) => blockRef.current[4] = r} className={`${componentName}_galleryItem`} ></div>
             <div ref={(r) => blockRef.current[5] = r} className={`${componentName}_galleryItem`} ></div>
-            <video ref={(r) => blockRef.current[6] = r} className={`${componentName}_galleryItem`} autoPlay={true} playsInline={true} muted={true} loop={true} src={experience3Video.default} />
             <div ref={(r) => blockRef.current[7] = r} className={`${componentName}_galleryItem`} ></div>
-            <video ref={(r) => blockRef.current[8] = r} className={`${componentName}_galleryItem`} autoPlay={true} playsInline={true} muted={true} loop={true} src={experience4Video.default} />
+            <div ref={(r) => blockRef.current[8] = r} className={`${componentName}_galleryItem`} ></div>
+            <div ref={(r) => blockRef.current[9] = r} className={`${componentName}_galleryItem`} ></div>
         </div>
     </div>
 };
 
 export default Gallery;
+
+/*
+                <video className={`${componentName}_galleryItem`} autoPlay={true} playsInline={true} muted={true} loop={true} src={experience1Video.default} />
+            <video ref={(r) => blockRef.current[6] = r} className={`${componentName}_galleryItem`} autoPlay={true} playsInline={true} muted={true} loop={true} src={experience3Video.default} />
+            <video ref={(r) => blockRef.current[8] = r} className={`${componentName}_galleryItem`} autoPlay={true} playsInline={true} muted={true} loop={true} src={experience4Video.default} />
+
+                */
