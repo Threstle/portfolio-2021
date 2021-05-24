@@ -139,6 +139,11 @@
       text-decoration: none;
     }
 
+    svg
+    {
+      color:@green-color;
+    }
+
   }
 
 
@@ -158,7 +163,46 @@
     }
   }
 
+  &_socialIcons
+  {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    right: 10px;
+    top:10px;
 
+    @media (min-width: @breakpoint-tablet) {
+      top: initial;
+      bottom: 40px;
+      right: 40px;
+    
+      span
+      {
+        margin: 0.5rem;
+      }
+    }
+
+    span
+    {
+      margin: 1rem;
+    }
+  }
+
+  &_socialIcon
+  {
+    cursor: pointer;
+    margin-left: auto;
+    margin-right: auto;
+    
+    svg
+    {
+        width: 15px;
+        @media (min-width: @breakpoint-tablet) {
+          width: 30px;
+          
+        }
+    }
+  }
 }
 
 

@@ -5,7 +5,6 @@ uniform sampler2D uDomTexture;
 uniform float uDisplacementAmount;
 uniform float uPointSize;
 varying vec2 vUv;
-varying float vDisplacement;
 
 float random (vec2 st) {
     return fract(sin(dot(st.xy,

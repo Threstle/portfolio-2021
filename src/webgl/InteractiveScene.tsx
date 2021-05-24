@@ -207,7 +207,7 @@ export default class InteractiveScene {
         //this.controls.update()
 
         // Render
-        this.renderer.render(this.scene, this.camera)
+         this.renderer.render(this.scene, this.camera)
 
         // Call tick again on the next frame
         window.requestAnimationFrame(this.tick.bind(this))
