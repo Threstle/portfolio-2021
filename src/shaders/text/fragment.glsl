@@ -1,14 +1,14 @@
 uniform sampler2D uDisplacementTexture;
-uniform sampler2D uDomTexture;
 uniform vec3 uDisplacedColor;
 uniform float uTime;
 
 varying vec2 vUv;
+varying vec3 vColor;
 
 
 void main()
 {
-     vec4 textCoord = texture2D(uDomTexture,vUv);
+     vec4 textCoord = vec4(vColor,1.0);
      vec4 displacementTextCoord = texture2D(uDisplacementTexture,vUv);
 
      // Si c'est blanc on affiche pas

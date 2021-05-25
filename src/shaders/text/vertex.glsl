@@ -1,10 +1,12 @@
 #define PI 3.1415926535897932384626433832795
 
 uniform sampler2D uDisplacementTexture;
-uniform sampler2D uDomTexture;
 uniform float uDisplacementAmount;
 uniform float uPointSize;
+attribute vec3 aColor;
+
 varying vec2 vUv;
+varying vec3 vColor;
 
 float random (vec2 st) {
     return fract(sin(dot(st.xy,
@@ -18,7 +20,6 @@ void main()
 
     // On récupère les coordonnées de la texture dom et de la texture interactive    
     vec4 displacementTextCoord = texture2D(uDisplacementTexture,uv);
-    vec4 textCoord = texture2D(uDomTexture,uv);
 
     float randAngle = random(uv)*PI*2.0;
     modelPosition.y += cos(randAngle)*displacementTextCoord.r*uDisplacementAmount;
@@ -30,8 +31,10 @@ void main()
     vec4 projectedPosition = projectionMatrix * viewPosition;
 
     gl_Position = projectedPosition;
+    //gl_PointSize = 2.0;
     gl_PointSize = uPointSize*randAngle;
     
     vUv = uv;
+    vColor = aColor;
 
 }

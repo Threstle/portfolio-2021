@@ -15,9 +15,16 @@ import textFragmentShader from '../shaders/text/fragment.glsl';
 //@ts-ignore
 import textVertexShader from '../shaders/text/vertex.glsl';
 
+//@ts-ignore
+import veilFragmentShader from '../shaders/veil/fragment.glsl';
+
+//@ts-ignore
+import veilVertexShader from '../shaders/veil/vertex.glsl';
+
 import { Clock, Mesh, Object3D, PerspectiveCamera, Points, Scene, Texture, Vector2, WebGLRenderer } from 'three';
 import InteractiveTexture from './InteractiveTexture';
 import Gui, { GuiSceneFolder, GuiSmokeShader, GuiTextShader } from '../helpers/Gui';
+import { EDeviceType, EnvUtils } from '../lib/utils/EnvUtils';
 
 
 export default class InteractiveScene {
@@ -34,10 +41,12 @@ export default class InteractiveScene {
     private controls: OrbitControls;
 
     private smokePlane: Points;
-    private domPlane: Object3D;
+    private domPlane: Points;
 
-    private domCanvas:HTMLCanvasElement;
-    private domUpdatedCallback:()=>void;
+    private domCanvas: HTMLCanvasElement;
+    private domUpdatedCallback: () => void;
+
+    private mustRender = false;
 
     private params: {
         backgroundColor: string;
@@ -49,8 +58,8 @@ export default class InteractiveScene {
         pCanvas: HTMLCanvasElement,
         pSizes: Vector2,
         pDom: HTMLElement,
-        pInteractiveTexture:InteractiveTexture,
-        pDomUpdatedCallback:()=>void = ()=>{},
+        pInteractiveTexture: InteractiveTexture,
+        pDomUpdatedCallback: () => void = () => { },
         pPixelRatio: number = Math.min(window.devicePixelRatio, 2),
     ) {
         this.params = {
@@ -75,11 +84,10 @@ export default class InteractiveScene {
         this.renderer.setPixelRatio(pPixelRatio);
         this.renderer.setClearColor(0x000000, this.params.alpha);
 
-        this.camera = new THREE.PerspectiveCamera(75, this.sizes.x / this.sizes.y, 0.1, 100);
+        this.camera = new THREE.PerspectiveCamera(75, this.aspectRatio, 0.1, 100);
         this.camera.position.set(0, 0, 3);
         this.scene.add(this.camera);
 
-        document.querySelector('.dg.main.a').append(this.domCanvas);
 
         // Listeners
         window.addEventListener("mousemove", this.onMouseMove.bind(this));
@@ -91,7 +99,9 @@ export default class InteractiveScene {
 
         this.smokePlane = this.createSmokePlane();
 
-        this.domPlane = this.createDomPlane(pDom);
+        this.createDomGeometry(pDom);
+
+        //this.domPlane = this.createDomPlane(pDom);
 
         //Launch animation loop
         this.clock = new Clock();
@@ -125,6 +135,18 @@ export default class InteractiveScene {
         // Mesh
         const mesh = new Points(geometry, material);
 
+        const veilMaterial = new THREE.ShaderMaterial({
+            vertexShader: veilVertexShader,
+            fragmentShader: veilFragmentShader,
+            uniforms: {
+                uDisplacementTexture: { value: this.interactiveTexture.texture },
+                uDisplacementAmount: { value: 0.48 }
+            }
+        })
+
+        const veilMesh = new THREE.Mesh(geometry, veilMaterial);
+        this.scene.add(veilMesh);
+
         this.scene.add(mesh);
 
         this.moveMeshInFrontOfCamera(mesh, this.camera, this.sizes.y);
@@ -132,8 +154,12 @@ export default class InteractiveScene {
         return mesh;
     }
 
-    createDomPlane(pDomElement: HTMLElement) {
-        const domGeometry = new THREE.PlaneGeometry(this.sizes.width * 0.004, this.sizes.height * 0.004, 256, 256);
+
+    createDomGeometry(pDomElement: HTMLElement) {
+
+        const domGeometry = new THREE.BufferGeometry();
+
+
         // Material
         const domMaterial = new THREE.ShaderMaterial({
             transparent: true,
@@ -146,20 +172,23 @@ export default class InteractiveScene {
                 uDisplacedColor: { value: new THREE.Color(this.params.textColor) },
                 uDisplacementAmount: { value: 0.269 },
                 uTime: { value: 0 },
-                uPointSize:{value:3.97}
+                uPointSize: { value: 1.97 }
 
             }
         })
+
         const domMesh = new THREE.Points(domGeometry, domMaterial);
+
         this.scene.add(domMesh);
+        this.domPlane = domMesh;
 
-        this.updateDomTexture(pDomElement,this?.domUpdatedCallback);
-
-        return domMesh;
+        this.updateDomTexture(pDomElement, () => {
+            this.domUpdatedCallback();
+        })
 
     }
 
-    updateDomTexture(pDomElement: HTMLElement,pCallback=()=>{}) {
+    updateDomTexture(pDomElement: HTMLElement, pCallback = () => { }) {
 
         //Hack pour afficher les éléments SVG. Isabella Lopes : https://stackoverflow.com/questions/32481054/svg-not-displayed-when-using-html2canvas
         var svgElements = pDomElement.querySelectorAll('svg');
@@ -170,25 +199,55 @@ export default class InteractiveScene {
             item.style.height = null;
         });
 
-        html2canvas(pDomElement).then(pDomCanvas => {
-
+        let isMobile = EnvUtils.getDeviceType() == EDeviceType.HANDHELD;
+        let scale = isMobile?0.8:0.4;
+        let sizeRatio = isMobile?0.005:0.01;
+        let positionRatio = isMobile?0.0025:0.005
+        html2canvas(pDomElement, {
+            scale: scale
+        }).then(pDomCanvas => {
+         
             this.domCanvas = pDomCanvas
-           // this.domCanvas.width = pDomCanvas.width;
-           // this.domCanvas.height = pDomCanvas.height;
-           // this.domCanvas.getContext('2d').drawImage(pDomCanvas,0,0);
 
-            const domTexture = new THREE.Texture(this.domCanvas);
+            let context = pDomCanvas.getContext('2d');
 
-            domTexture.needsUpdate = true;
+            let tempVertexArray = [];
+            let tempColorArray = [];
+            let tempUvArray = [];
 
-            domTexture.magFilter = THREE.NearestFilter;
+            for (let y = 0; y < pDomCanvas.height; y++) {
+                for (let x = 0; x < pDomCanvas.width; x++) {
+                    let pixelData = context.getImageData(x, y, 1, 1).data;
+                    if (
+                        pixelData[0] < 255
+                    ) {
+                        tempVertexArray.push(x * sizeRatio - pDomCanvas.width * positionRatio);
+                        tempVertexArray.push(-y * sizeRatio + pDomCanvas.height * positionRatio);
+                        tempVertexArray.push(0);
 
-            //@ts-ignore
-            this.domPlane.material.uniforms.uDomTexture.value = domTexture;
+                        tempColorArray.push(pixelData[0] / 255);
+                        tempColorArray.push(pixelData[1] / 255);
+                        tempColorArray.push(pixelData[2] / 255);
 
-            
+                        tempUvArray.push(Math.abs(x / pDomCanvas.width));
+                        tempUvArray.push(1.0 - Math.abs(-y / pDomCanvas.height));
+                    }
+                }
+            }
+
+            const vertexArray = new Float32Array(tempVertexArray);
+            const colorArray = new Float32Array(tempColorArray);
+            const uvArray = new Float32Array(tempUvArray);
+
+
+            this.domPlane.geometry.setAttribute('position', new THREE.BufferAttribute(vertexArray, 3));
+            this.domPlane.geometry.setAttribute('aColor', new THREE.BufferAttribute(colorArray, 3));
+            this.domPlane.geometry.setAttribute('uv', new THREE.BufferAttribute(uvArray, 2));
+
             pCallback();
+
         });
+
     }
 
     // Animations
@@ -200,14 +259,12 @@ export default class InteractiveScene {
         //@ts-ignore
         this.smokePlane.material.uniforms.uTime.value = elapsedTime
         //@ts-ignore
-        this.domPlane.material.uniforms.uTime.value = elapsedTime
         this.interactiveTexture.update(this.mouse);
-
-        // Update controls
-        //this.controls.update()
-
         // Render
-         this.renderer.render(this.scene, this.camera)
+        if (this.mustRender) {
+
+            this.renderer.render(this.scene, this.camera)
+        }
 
         // Call tick again on the next frame
         window.requestAnimationFrame(this.tick.bind(this))
@@ -225,8 +282,6 @@ export default class InteractiveScene {
 
     initDebugPanel() {
 
-
-
         GuiSceneFolder.addColor(this.params, "backgroundColor").onChange((pColor) => {
             this.renderer.setClearColor(pColor)
             this.renderer.setClearAlpha(this.params.alpha)
@@ -240,7 +295,7 @@ export default class InteractiveScene {
 
         GuiTextShader.addColor(this.params, 'textColor').onChange((pColor) => {
             //@ts-ignore
-            this.domPlane.material.uniforms.uDisplacedColor.value = new THREE.Color(pColor);
+            //   this.domPlane.material.uniforms.uDisplacedColor.value = new THREE.Color(pColor);
         })
 
         //@ts-ignore
@@ -253,7 +308,7 @@ export default class InteractiveScene {
 
     onMouseMove(e: any) {
 
-        if (!e?.clientX) {
+        if (!e?.clientX && e?.touches) {
             e.clientX = e?.touches[0]?.clientX;
             e.clientY = e?.touches[0]?.clientY;
         }
@@ -275,9 +330,13 @@ export default class InteractiveScene {
         this.aspectRatio = this.sizes.x / this.sizes.y;
 
         this.camera.aspect = this.aspectRatio;
-        //this.camera.updateProjectionMatrix()
-
         this.renderer.setSize(this.sizes.x, this.sizes.y)
+       // this.moveMeshInFrontOfCamera(this.domPlane,this.camera,this.sizes.y);
+       // this.moveMeshInFrontOfCamera(this.smokePlane,this.camera,this.sizes.y);
+       // this.camera.updateProjectionMatrix()
     }
 
+    public setMustRender(pMustRender: boolean) {
+        this.mustRender = pMustRender;
+    }
 }
