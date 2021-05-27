@@ -164,15 +164,15 @@ function App(props: IProps) {
         clearTimeout(resizedFinishedRef.current);
         resizedFinishedRef.current = setTimeout(() => {
             //FIXME: faire marcher le resize
-            /* const size = new Vector2(window.innerWidth, window.innerHeight);
+             const size = new Vector2(window.innerWidth, window.innerHeight);
 
             interactiveTextureRef?.current?.resize(new Vector2(size.x / 50, size.y / 50))
             interactiveSceneRef?.current?.updateDomTexture(containerRef.current, () => {
                 interactiveSceneRef?.current?.onResize(size);
                 interactiveSceneRef.current.setMustRender(true);
 
-            });*/
-            window.location.reload();
+            });
+            //window.location.reload();
 
         }, 250);
 
