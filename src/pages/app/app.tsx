@@ -81,7 +81,7 @@ function App(props: IProps) {
                     interactiveTextureRef.current,
                     onDomTextureUpdated
                 );
-        }, 1000);
+        }, 500);
 
         if (!new URLSearchParams(window.location.search).get('debug')) {
             //@ts-ignore
@@ -163,16 +163,13 @@ function App(props: IProps) {
         interactiveSceneRef.current.setMustRender(false); 
         clearTimeout(resizedFinishedRef.current);
         resizedFinishedRef.current = setTimeout(() => {
-            //FIXME: faire marcher le resize
              const size = new Vector2(window.innerWidth, window.innerHeight);
-
             interactiveTextureRef?.current?.resize(new Vector2(size.x / 50, size.y / 50))
             interactiveSceneRef?.current?.updateDomTexture(containerRef.current, () => {
                 interactiveSceneRef?.current?.onResize(size);
                 interactiveSceneRef.current.setMustRender(true);
 
             });
-            //window.location.reload();
 
         }, 250);
 
@@ -199,7 +196,7 @@ function App(props: IProps) {
                     </div>
                 </div>
                 <div className={`${componentName}_textWrapper`}>
-                    <p ref={textRef} className={`${componentName}_introText`}> Based in Lyon, France and currently available for freelance jobs, I am a Gobelins Paris graduate with a 5 year experience as a creative developer for <FocusedElement onFocusChange={onFocus} className={`${componentName}_link ${componentName}_link-cherAmi`}><a href="https://cher-ami.tv" target="_blank">Cher Ami.</a></FocusedElement>. I like <i>NodeJs, ThreeJs, Pixi, Phaser Unity, Gsap, React, GLSL and free jazz.</i> Want to meet? Drop me a message <FocusedElement onFocusChange={onFocus} className={`${componentName}_link`}><a href="mailto:etienne.chaumont@gmail.com">here.</a></FocusedElement></p>
+                    <p ref={textRef} className={`${componentName}_introText`}> Based in Lyon, France and currently available for freelance jobs, I am a Gobelins Paris graduate with a 5 year experience as a creative developer for <FocusedElement onFocusChange={onFocus} className={`${componentName}_link ${componentName}_link-cherAmi`}><a href="https://cher-ami.tv" target="_blank">Cher Ami.</a></FocusedElement> I like <i>NodeJs, ThreeJs, Pixi, Phaser Unity, Gsap, React, GLSL and free jazz.</i> Want to meet? Drop me a message <FocusedElement onFocusChange={onFocus} className={`${componentName}_link`}><a href="mailto:etienne.chaumont@gmail.com">here.</a></FocusedElement></p>
                 </div>
 
             </div>

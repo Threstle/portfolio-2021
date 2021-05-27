@@ -21,7 +21,7 @@ import veilFragmentShader from '../shaders/veil/fragment.glsl';
 //@ts-ignore
 import veilVertexShader from '../shaders/veil/vertex.glsl';
 
-import { Clock, Mesh, Object3D, PerspectiveCamera, Points, Scene, Texture, Vector2, WebGLRenderer } from 'three';
+import { BoxGeometry, Clock, Material, Mesh, Object3D, PerspectiveCamera, Points, Scene, Texture, Vector2, WebGLRenderer } from 'three';
 import InteractiveTexture from './InteractiveTexture';
 import Gui, { GuiSceneFolder, GuiSmokeShader, GuiTextShader } from '../helpers/Gui';
 import { EDeviceType, EnvUtils } from '../lib/utils/EnvUtils';
@@ -31,6 +31,7 @@ export default class InteractiveScene {
 
     private sizes: Vector2;
     private aspectRatio: number;
+    private pixelRatio:number;
     private interactiveTexture: InteractiveTexture;
     private renderer: WebGLRenderer;
     private scene: Scene;
@@ -42,6 +43,7 @@ export default class InteractiveScene {
 
     private smokePlane: Points;
     private domPlane: Points;
+    private veilPlane: Mesh;
 
     private domCanvas: HTMLCanvasElement;
     private domUpdatedCallback: () => void;
@@ -64,7 +66,7 @@ export default class InteractiveScene {
     ) {
         this.params = {
             backgroundColor: "#FFFFFF",
-            alpha: 0,
+            alpha: 1,
             textColor: "#7FE519",
         };
 
@@ -72,6 +74,7 @@ export default class InteractiveScene {
 
         this.sizes = pSizes;
         this.aspectRatio = this.sizes.x / this.sizes.y;
+        this.pixelRatio = pPixelRatio;
 
         this.scene = new Scene();
 
@@ -80,6 +83,7 @@ export default class InteractiveScene {
             alpha: true
         });
 
+
         this.renderer.setSize(this.sizes.x, this.sizes.y);
         this.renderer.setPixelRatio(pPixelRatio);
         this.renderer.setClearColor(0x000000, this.params.alpha);
@@ -87,13 +91,14 @@ export default class InteractiveScene {
         this.camera = new THREE.PerspectiveCamera(75, this.aspectRatio, 0.1, 100);
         this.camera.position.set(0, 0, 3);
         this.scene.add(this.camera);
-
+      //  const helper = new THREE.CameraHelper(this.camera);
+       // this.scene.add(helper);
 
         // Listeners
-        window.addEventListener("mousemove", this.onMouseMove.bind(this));
-        window.addEventListener("touchmove", this.onMouseMove.bind(this));
-        window.addEventListener("touchstart", this.onMouseMove.bind(this));
-        window.addEventListener("touchend", this.onTouchEnd.bind(this));
+        window.addEventListener("mousemove", this.onMouseMove.bind(this), { passive: true });
+        window.addEventListener("touchmove", this.onMouseMove.bind(this), { passive: true });
+        window.addEventListener("touchstart", this.onMouseMove.bind(this), { passive: true });
+        window.addEventListener("touchend", this.onTouchEnd.bind(this), { passive: true });
 
         this.interactiveTexture = pInteractiveTexture;
 
@@ -110,6 +115,10 @@ export default class InteractiveScene {
 
         this.initDebugPanel();
 
+
+/*        this.scene.add(new Mesh(new BoxGeometry(1, 1, 1, 1), new THREE.MeshBasicMaterial({
+            color: "red"
+        })))*/
         document.querySelector('.dg.main.a').append(this.interactiveTexture.canvas);
 
     }
@@ -146,7 +155,7 @@ export default class InteractiveScene {
 
         const veilMesh = new THREE.Mesh(geometry, veilMaterial);
         this.scene.add(veilMesh);
-
+        this.veilPlane = veilMesh;
         this.scene.add(mesh);
 
         this.moveMeshInFrontOfCamera(mesh, this.camera, this.sizes.y);
@@ -158,7 +167,6 @@ export default class InteractiveScene {
     createDomGeometry(pDomElement: HTMLElement) {
 
         const domGeometry = new THREE.BufferGeometry();
-
 
         // Material
         const domMaterial = new THREE.ShaderMaterial({
@@ -172,7 +180,7 @@ export default class InteractiveScene {
                 uDisplacedColor: { value: new THREE.Color(this.params.textColor) },
                 uDisplacementAmount: { value: 0.269 },
                 uTime: { value: 0 },
-                uPointSize: { value: 1.97 }
+                uPointSize: { value: 1.97*this.pixelRatio }
 
             }
         })
@@ -183,6 +191,7 @@ export default class InteractiveScene {
         this.domPlane = domMesh;
 
         this.updateDomTexture(pDomElement, () => {
+
             this.domUpdatedCallback();
         })
 
@@ -200,13 +209,13 @@ export default class InteractiveScene {
         });
 
         let isMobile = EnvUtils.getDeviceType() == EDeviceType.HANDHELD;
-        let scale = isMobile?0.8:0.4;
-        let sizeRatio = isMobile?0.005:0.01;
-        let positionRatio = isMobile?0.0025:0.005
+        let scale = isMobile ? 0.8 : 0.4;
+        let sizeRatio = isMobile ? 0.005 : 0.01;
+        let positionRatio = isMobile ? 0.0025 : 0.005
         html2canvas(pDomElement, {
             scale: scale
         }).then(pDomCanvas => {
-         
+
             this.domCanvas = pDomCanvas
 
             let context = pDomCanvas.getContext('2d');
@@ -244,6 +253,7 @@ export default class InteractiveScene {
             this.domPlane.geometry.setAttribute('aColor', new THREE.BufferAttribute(colorArray, 3));
             this.domPlane.geometry.setAttribute('uv', new THREE.BufferAttribute(uvArray, 2));
 
+            //document.querySelector('.dg.main.a').append(pDomCanvas);
             pCallback();
 
         });
@@ -255,13 +265,13 @@ export default class InteractiveScene {
     tick() {
         const elapsedTime = this.clock.getElapsedTime()
 
-        // Update material
-        //@ts-ignore
-        this.smokePlane.material.uniforms.uTime.value = elapsedTime
-        //@ts-ignore
-        this.interactiveTexture.update(this.mouse);
+
         // Render
         if (this.mustRender) {
+            // Update material
+            //@ts-ignore
+            this.smokePlane.material.uniforms.uTime.value = elapsedTime
+            this.interactiveTexture.update(this.mouse);
 
             this.renderer.render(this.scene, this.camera)
         }
@@ -325,15 +335,18 @@ export default class InteractiveScene {
     }
 
     public onResize(pSize: Vector2) {
-
+        console.log(pSize);
         this.sizes = pSize;
         this.aspectRatio = this.sizes.x / this.sizes.y;
-
         this.camera.aspect = this.aspectRatio;
+        this.camera.updateProjectionMatrix()
+
+        this.smokePlane.geometry = new THREE.PlaneGeometry(this.sizes.x * 0.004, this.sizes.y * 0.004, 128, 128)
+        this.veilPlane.geometry = new THREE.PlaneGeometry(this.sizes.x * 0.004, this.sizes.y * 0.004, 128, 128)
+
+        this.moveMeshInFrontOfCamera(this.smokePlane,this.camera,this.sizes.y);
+         this.moveMeshInFrontOfCamera(this.veilPlane,this.camera,this.sizes.y);
         this.renderer.setSize(this.sizes.x, this.sizes.y)
-       // this.moveMeshInFrontOfCamera(this.domPlane,this.camera,this.sizes.y);
-       // this.moveMeshInFrontOfCamera(this.smokePlane,this.camera,this.sizes.y);
-       // this.camera.updateProjectionMatrix()
     }
 
     public setMustRender(pMustRender: boolean) {

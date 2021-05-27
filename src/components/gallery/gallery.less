@@ -6,7 +6,7 @@
 @COMPONENT: Gallery;
 
 .Gallery {
-
+    display: none;
     width        : 50%;
     margin-bottom: 1rem;
     position     : relative;
@@ -18,6 +18,10 @@
         margin-bottom: 0;
         padding      : 30px;
 
+    }
+
+    @media (min-width: @breakpoint-tablet),(orientation: portrait) {
+        display: initial;
     }
 
     &_border {

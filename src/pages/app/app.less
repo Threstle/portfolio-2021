@@ -53,7 +53,7 @@
     position        : fixed;
     top             : 0;
     left            : 0;
-    z-index         : 2;
+    z-index         : 3;
     width           : 100%;
     height          : 100%;
     background-color: @white-color;
@@ -105,17 +105,17 @@
 
   &_textWrapper {
     .font-esteban-regular();
-    //text-align: center;
-    display          : flex;
-    //justify-content: center;
+    display          : none;
     align-items      : center;
-    //flex-grow: 1;
 
     margin-top : 10px;
     line-height: 25px;
     width      : 100%;
     text-align : left;
 
+    @media (min-width: @breakpoint-tablet),(orientation: portrait) {
+      display: flex;
+    }
   }
 
 

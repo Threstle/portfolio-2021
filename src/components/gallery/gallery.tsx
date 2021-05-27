@@ -42,6 +42,7 @@ function Gallery(props: IProps) {
         const shuffledTab = shuffle(blockRef.current);
 
         shuffledTab.forEach((pBlock, pIndex) => {
+            if(!pBlock)return;
             gsap.to(pBlock, {
                 opacity: 1,
                 duration: 1,
@@ -91,34 +92,6 @@ function Gallery(props: IProps) {
             height:currentBlock?.getBoundingClientRect().height +2,
             width:currentBlock?.getBoundingClientRect().width +2
         })
-/*
-        let randomBlock = setRandomBlock();
-
-        gsap.to(videoRef.current,{
-            opacity:0,
-            ease:Quint.easeInOut,
-            duration:0.5,
-            onComplete:()=>{
-
-                gsap.set(videoRef.current,{
-                    x:randomBlock.offsetLeft-1,
-                    y:randomBlock.offsetTop -1,
-                    duration:0.5,
-                    ease:Quint.easeInOut
-                })
-
-                pVideo.currentTime = 0;
-                pVideo.play();
-
-                gsap.to(videoRef.current,{
-                    opacity:1,
-                    ease:Quint.easeInOut,
-                    duration:0.5,
-                })
-            }
-        });
-*/
-     
     }
 
     // -------------------–-------------------–-------------------–--------------- REGISTER PAGE
