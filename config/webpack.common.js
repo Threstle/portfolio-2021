@@ -122,7 +122,7 @@ module.exports = {
             favicon: path.resolve(__dirname, '../src/static/images/favicon-32x32.png'),
             url:"http://etienne-chaumont.fr/",
             title: "Etienne Chaumont - Creative Dev",
-            description:"Based in Lyon, France and currently available for freelance jobs, I am a Gobelins Paris graduate with a 5 year experience as a creative developer for Cher Ami. I like NodeJs, ThreeJs, Pixi, Phaser Unity, Gsap, React, GLSL and free jazz."
+            description:"Based in Lyon, France and currently available for freelance jobs. I like NodeJs, ThreeJs, Pixi, Phaser Unity, Gsap, React, GLSL and free jazz."
         })
     ]
 };
