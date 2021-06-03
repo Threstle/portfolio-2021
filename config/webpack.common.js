@@ -8,13 +8,13 @@ const SRC = path.resolve(__dirname, 'node_modules');
 
 module.exports = {
     entry: path.resolve(__dirname, '../src/index.tsx'),
-   
+
     // Enable sourcemaps for debugging webpack's output.
     devtool: "source-map",
 
     resolve: {
         // Add '.ts' and '.tsx' as resolvable extensions.
-        extensions: [".ts", ".tsx",".js"]
+        extensions: [".ts", ".tsx", ".js"]
     },
 
     output:
@@ -25,11 +25,7 @@ module.exports = {
 
     module: {
         rules: [
-            // HTML
-            {
-                test: /\.(html)$/,
-                use: ['html-loader']
-            },
+
             // TS
             {
                 test: /\.ts(x?)$/,
@@ -73,29 +69,30 @@ module.exports = {
             {
                 test: /\.(jpg|png|gif|svg)$/,
                 use:
-                [
-                    {
-                        loader: 'file-loader',
-                        options:
+                    [
                         {
-                            outputPath: 'assets/images/'
+                            loader: 'file-loader',
+                            options:
+                            {
+                                outputPath: 'assets/images/',
+                                esModule: false
+                            }
                         }
-                    }
-                ]
+                    ]
             },
             // Fonts
             {
                 test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
                 use: [
-                  {
-                    loader: 'file-loader',
-                    options: {
-                      name: '[name].[ext]',
-                      outputPath: 'assets/fonts/'
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: '[name].[ext]',
+                            outputPath: 'assets/fonts/'
+                        }
                     }
-                  }
                 ]
-              },
+            },
 
             // Shaders
             {
@@ -120,7 +117,12 @@ module.exports = {
     plugins: [
         new MiniCssExtractPlugin(),
         new HtmlWebpackPlugin({
-            template: path.resolve(__dirname, '../src/index.html')
+            minify:false,
+            template: path.resolve(__dirname, '../src/index.html'),
+            favicon: path.resolve(__dirname, '../src/static/images/favicon-32x32.png'),
+            url:"http://etienne-chaumont.fr/",
+            title: "Etienne Chaumont - Creative Dev",
+            description:"Based in Lyon, France and currently available for freelance jobs, I am a Gobelins Paris graduate with a 5 year experience as a creative developer for Cher Ami. I like NodeJs, ThreeJs, Pixi, Phaser Unity, Gsap, React, GLSL and free jazz."
         })
     ]
 };

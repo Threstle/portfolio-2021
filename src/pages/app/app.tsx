@@ -160,14 +160,16 @@ function App(props: IProps) {
 
     const onResize = () => {
 
-        interactiveSceneRef.current.setMustRender(false); 
         clearTimeout(resizedFinishedRef.current);
+        interactiveSceneRef.current.setMustRender(false); 
+        webglCanvasRef.current.style.opacity = "0";
         resizedFinishedRef.current = setTimeout(() => {
-             const size = new Vector2(window.innerWidth, window.innerHeight);
+            const size = new Vector2(window.innerWidth, window.innerHeight);
             interactiveTextureRef?.current?.resize(new Vector2(size.x / 50, size.y / 50))
             interactiveSceneRef?.current?.updateDomTexture(containerRef.current, () => {
                 interactiveSceneRef?.current?.onResize(size);
                 interactiveSceneRef.current.setMustRender(true);
+                webglCanvasRef.current.style.opacity = "1";
 
             });
 
